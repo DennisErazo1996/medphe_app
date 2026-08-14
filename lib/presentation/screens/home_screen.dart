@@ -158,9 +158,7 @@ class _HomeContent extends ConsumerWidget {
         SliverToBoxAdapter(
           child: _FeaturedDoctorsCarousel(doctores: destacados),
         ),
-        const SliverToBoxAdapter(
-          child: _SectionHeader(title: 'Más servicios'),
-        ),
+        const SliverToBoxAdapter(child: _SectionHeader(title: 'Más servicios')),
         const SliverToBoxAdapter(child: _ServicesGrid()),
         SliverToBoxAdapter(
           child: SizedBox(height: MediaQuery.paddingOf(context).bottom + 16),
@@ -181,6 +179,18 @@ class _HomeHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final horaActual = DateTime.now().hour;
+    final saludo = horaActual < 12
+        ? '¡Buenos días!'
+        : horaActual < 18
+            ? '¡Buenas tardes!'
+            : '¡Buenas noches!';
+    final saludoIcon = horaActual < 12
+        ? Icons.sunny
+        : horaActual < 18
+            ? Icons.wb_sunny_outlined
+            : Icons.nightlight_round;
+
     return Container(
       decoration: const BoxDecoration(
         color: kMedphePrimary,
@@ -196,9 +206,11 @@ class _HomeHeader extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+
                   const Text(
                     'Medphe',
                     style: TextStyle(
@@ -213,23 +225,47 @@ class _HomeHeader extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
+
+              const SizedBox(height: 10),
+
+              Row(
+                children: [
+                  Icon(saludoIcon, color: const Color.fromARGB(255, 253, 196, 255).withValues(alpha: 0.9), size: 20),
+                  const SizedBox(width: 6),
+                  Text(
+                    saludo,
+                    style: TextStyle(
+                      color: const Color.fromARGB(255, 253, 196, 255).withValues(alpha: 0.9),
+                      fontWeight: FontWeight.w700,
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 6),
+
               const Text(
                 'Encuentra a tu\nespecialista ideal',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 26,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w900,
                   height: 1.2,
                 ),
               ),
+
               const SizedBox(height: 6),
+
               Text(
                 'Médicos verificados, agenda de citas y atención cerca de ti.',
                 style: TextStyle(color: Colors.white.withValues(alpha: 0.8)),
               ),
+
               const SizedBox(height: 18),
+              
               _SearchPill(ref: ref),
+
             ],
           ),
         ),
@@ -368,11 +404,12 @@ class _SpecialtyTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(18),
       child: Container(
-        width: 84,
+        width: 86,
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -382,6 +419,7 @@ class _SpecialtyTile extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+
             Container(
               width: 44,
               height: 44,
@@ -391,7 +429,9 @@ class _SpecialtyTile extends StatelessWidget {
               ),
               child: Icon(icon, color: color, size: 22),
             ),
+
             const SizedBox(height: 8),
+            
             Text(
               nombre,
               maxLines: 1,
@@ -551,7 +591,7 @@ class _FeaturedDoctorsCarousel extends StatelessWidget {
     if (doctores.isEmpty) return const SizedBox.shrink();
 
     return SizedBox(
-      height: 264,
+      height: 280,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         // Padding vertical para que la sombra de las cards (blur 20,
@@ -727,6 +767,40 @@ class _FeaturedDoctorCard extends ConsumerWidget {
                         ),
                       ),
                     ],
+                  ),
+                  const SizedBox(height: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 9,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: accent.withValues(alpha: 0.10),
+                      borderRadius: BorderRadius.circular(100),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.location_city_outlined,
+                          size: 12,
+                          color: accent,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          doctor.atiendeEn.length == 1
+                              ? '1 centro médico'
+                              : '${doctor.atiendeEn.length} centros médicos',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: accent,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),

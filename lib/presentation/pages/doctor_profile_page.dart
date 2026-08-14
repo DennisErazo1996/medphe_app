@@ -305,7 +305,7 @@ class _IdentityCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 4),
                 Text(
-                  doctor.ciudad.nombre,
+                  '${doctor.ciudad.nombre}, ${doctor.ciudad.departamento}',
                   style: TextStyle(
                     color: Colors.grey.shade800,
                     fontSize: 12.5,
@@ -337,7 +337,7 @@ class _StatsStrip extends StatelessWidget {
       ),
       (
         '${doctor.atiendeEn.length}',
-        doctor.atiendeEn.length == 1 ? 'Sede' : 'Sedes',
+        doctor.atiendeEn.length == 1 ? 'Centro médico' : 'Centros médicos',
         Icons.location_city_outlined,
         kCategoryPalette[2],
       ),

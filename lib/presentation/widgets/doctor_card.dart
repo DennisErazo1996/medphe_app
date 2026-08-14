@@ -36,12 +36,16 @@ class DoctorCard extends ConsumerWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              
               _DoctorPhoto(doctor: doctor, accent: accent),
+              
               const SizedBox(width: 14),
+              
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    
                     Text(
                       doctor.nombre,
                       maxLines: 1,
@@ -51,7 +55,9 @@ class DoctorCard extends ConsumerWidget {
                         fontSize: 15,
                       ),
                     ),
+                    
                     const SizedBox(height: 6),
+                    
                     Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 10,
@@ -72,7 +78,9 @@ class DoctorCard extends ConsumerWidget {
                         ),
                       ),
                     ),
+
                     const SizedBox(height: 8),
+                    
                     Row(
                       children: [
                         Icon(
@@ -80,7 +88,9 @@ class DoctorCard extends ConsumerWidget {
                           size: 14,
                           color: Colors.grey.shade500,
                         ),
+                        
                         const SizedBox(width: 3),
+                        
                         Expanded(
                           child: Text(
                             doctor.atiendeEn.isNotEmpty
