@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../domain/entities/doctor.dart';
 import '../../domain/entities/especialidad.dart';
-import '../theme/app_theme.dart';
+import '../../config/theme/app_theme.dart';
 import '../providers/providers.dart';
 import '../widgets/widgets.dart';
 import 'doctors_filter_modal.dart';

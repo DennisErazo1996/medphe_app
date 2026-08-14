@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
-import '../theme/app_theme.dart';
+import '../../config/theme/app_theme.dart';
 import '../providers/providers.dart';
 
 Future<void> showDoctorsFilterModal(BuildContext context, WidgetRef ref) {

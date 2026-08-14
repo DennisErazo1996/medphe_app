@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../domain/entities/doctor.dart';
 import '../providers/providers.dart';
-import '../theme/app_theme.dart';
+import '../../config/theme/app_theme.dart';
 
 /// Abre el buscador de médicos y aplica el nombre ingresado como filtro.
 /// Punto único usado tanto por la píldora de búsqueda del home como por el

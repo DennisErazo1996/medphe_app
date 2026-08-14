@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../theme/app_theme.dart';
+import '../../config/theme/app_theme.dart';
 import 'doctors_search_delegate.dart';
 import 'favorites_screen.dart';
 import 'home_screen.dart';

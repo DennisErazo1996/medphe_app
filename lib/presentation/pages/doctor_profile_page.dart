@@ -5,7 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../domain/entities/doctor.dart';
 import '../providers/providers.dart';
-import '../theme/app_theme.dart';
+import '../../config/theme/app_theme.dart';
 import '../widgets/widgets.dart';
 
 class DoctorProfilePage extends ConsumerWidget {
