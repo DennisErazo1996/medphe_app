@@ -4,11 +4,11 @@ import '../pages/pages.dart';
 import '../screens/screens.dart';
 
 final appRouter = GoRouter(
-  initialLocation: '/doctors',
+  initialLocation: '/',
   routes: [
     GoRoute(
-      path: '/doctors',
-      builder: (context, state) => const DoctorsListScreen(),
+      path: '/',
+      builder: (context, state) => const HomeShell(),
     ),
     GoRoute(
       path: '/doctors/:id',

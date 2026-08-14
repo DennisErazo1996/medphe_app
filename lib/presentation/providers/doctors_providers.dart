@@ -18,6 +18,10 @@ final ciudadesProvider = FutureProvider<List<Ciudad>>((ref) {
   return ref.watch(doctorsRepositoryProvider).getCiudades();
 });
 
+final allDoctorsProvider = FutureProvider<List<Doctor>>((ref) {
+  return ref.watch(doctorsRepositoryProvider).searchDoctors();
+});
+
 class DoctorsSearchFilter {
   const DoctorsSearchFilter({this.especialidadId, this.ciudadId, this.nombre});
 

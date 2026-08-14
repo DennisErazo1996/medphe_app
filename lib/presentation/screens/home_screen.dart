@@ -4,13 +4,14 @@ import 'package:go_router/go_router.dart';
 
 import '../../domain/entities/doctor.dart';
 import '../../domain/entities/especialidad.dart';
-import '../../main.dart';
+import '../theme/app_theme.dart';
 import '../providers/providers.dart';
+import '../widgets/widgets.dart';
 import 'doctors_filter_modal.dart';
 import 'doctors_search_delegate.dart';
 
-class DoctorsListScreen extends ConsumerWidget {
-  const DoctorsListScreen({super.key});
+class HomeScreen extends ConsumerWidget {
+  const HomeScreen({super.key});
 
   bool _tieneFiltroActivo(DoctorsSearchFilter filter) {
     return filter.especialidadId != null ||
@@ -24,41 +25,16 @@ class DoctorsListScreen extends ConsumerWidget {
     final filter = ref.watch(doctorsSearchFilterProvider);
     final tieneFiltro = _tieneFiltroActivo(filter);
 
-    if (tieneFiltro) {
-      return Scaffold(
-        appBar: AppBar(
-          title: const Text('Resultados'),
-          leading: IconButton(
-            icon: const Icon(Icons.close),
-            onPressed: () {
-              ref.read(doctorsSearchFilterProvider.notifier).state =
-                  const DoctorsSearchFilter();
-            },
-          ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.tune),
-              onPressed: () => showDoctorsFilterModal(context, ref),
-            ),
-          ],
-        ),
-        body: resultsAsync.when(
-          data: (doctores) => doctores.isEmpty
-              ? const _EmptyState()
-              : _ResultadosList(doctores: doctores),
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (error, stackTrace) =>
-              _ErrorState(onRetry: () => ref.invalidate(doctorsSearchResultsProvider)),
-        ),
-      );
-    }
-
-    return Scaffold(
-      body: resultsAsync.when(
-        data: (doctores) => _HomeContent(doctores: doctores),
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stackTrace) =>
-            _ErrorState(onRetry: () => ref.invalidate(doctorsSearchResultsProvider)),
+    return resultsAsync.when(
+      data: (doctores) {
+        if (tieneFiltro) {
+          return _FilteredResults(doctores: doctores);
+        }
+        return _HomeContent(doctores: doctores);
+      },
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, stackTrace) => _ErrorState(
+        onRetry: () => ref.invalidate(doctorsSearchResultsProvider),
       ),
     );
   }
@@ -84,6 +60,66 @@ class _ErrorState extends StatelessWidget {
   }
 }
 
+class _FilteredResults extends ConsumerWidget {
+  const _FilteredResults({required this.doctores});
+
+  final List<Doctor> doctores;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return SafeArea(
+      bottom: false,
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(12, 8, 20, 8),
+            child: Row(
+              children: [
+                CircleIconButton(
+                  icon: Icons.close,
+                  onPressed: () {
+                    ref.read(doctorsSearchFilterProvider.notifier).state =
+                        const DoctorsSearchFilter();
+                  },
+                ),
+                const Expanded(
+                  child: Text(
+                    'Resultados',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+                  ),
+                ),
+                CircleIconButton(
+                  icon: Icons.tune,
+                  onPressed: () => showDoctorsFilterModal(context, ref),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: doctores.isEmpty
+                ? const EmptyState(
+                    icon: Icons.search_off,
+                    title: 'Sin resultados',
+                    message: 'Intenta con otra especialidad, ciudad o nombre.',
+                  )
+                : ListView.separated(
+                    padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+                    itemCount: doctores.length,
+                    separatorBuilder: (context, index) =>
+                        const SizedBox(height: 12),
+                    itemBuilder: (context, index) => DoctorCard(
+                      doctor: doctores[index],
+                      accent: kCategoryPalette[index % kCategoryPalette.length],
+                    ),
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _HomeContent extends ConsumerWidget {
   const _HomeContent({required this.doctores});
 
@@ -97,7 +133,7 @@ class _HomeContent extends ConsumerWidget {
     return CustomScrollView(
       slivers: [
         SliverToBoxAdapter(child: _HomeHeader(ref: ref)),
-        SliverToBoxAdapter(
+        const SliverToBoxAdapter(
           child: _SectionHeader(title: 'Especialidades'),
         ),
         SliverToBoxAdapter(
@@ -111,13 +147,13 @@ class _HomeContent extends ConsumerWidget {
             error: (error, stackTrace) => const SizedBox.shrink(),
           ),
         ),
-        SliverToBoxAdapter(
+        const SliverToBoxAdapter(
           child: _SectionHeader(title: 'Médicos destacados'),
         ),
         SliverToBoxAdapter(
           child: _FeaturedDoctorsCarousel(doctores: destacados),
         ),
-        SliverToBoxAdapter(
+        const SliverToBoxAdapter(
           child: _SectionHeader(title: 'Todos los médicos'),
         ),
         SliverPadding(
@@ -125,8 +161,10 @@ class _HomeContent extends ConsumerWidget {
           sliver: SliverList.separated(
             itemCount: doctores.length,
             separatorBuilder: (context, index) => const SizedBox(height: 12),
-            itemBuilder: (context, index) =>
-                _DoctorCard(doctor: doctores[index], accent: kCategoryPalette[index % kCategoryPalette.length]),
+            itemBuilder: (context, index) => DoctorCard(
+              doctor: doctores[index],
+              accent: kCategoryPalette[index % kCategoryPalette.length],
+            ),
           ),
         ),
       ],
@@ -233,18 +271,7 @@ class _SearchPill extends StatelessWidget {
       borderRadius: BorderRadius.circular(16),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
-        onTap: () {
-          showSearch<String?>(
-            context: context,
-            delegate: DoctorsSearchDelegate(
-              onSubmit: (nombre) {
-                final current = ref.read(doctorsSearchFilterProvider);
-                ref.read(doctorsSearchFilterProvider.notifier).state =
-                    current.copyWith(nombre: () => nombre);
-              },
-            ),
-          );
-        },
+        onTap: () => openDoctorsSearch(context, ref),
         child: const Padding(
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           child: Row(
@@ -406,24 +433,26 @@ class _FeaturedDoctorsCarousel extends StatelessWidget {
   }
 }
 
-class _FeaturedDoctorCard extends StatelessWidget {
+class _FeaturedDoctorCard extends ConsumerWidget {
   const _FeaturedDoctorCard({required this.doctor, required this.accent});
 
   final Doctor doctor;
   final Color accent;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isFavorito = ref
+        .watch(favoriteDoctorIdsProvider)
+        .contains(doctor.id);
+
     return InkWell(
       onTap: () => context.push('/doctors/${doctor.id}'),
       borderRadius: BorderRadius.circular(20),
       child: Container(
         width: 160,
-        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
-          border: Border(left: BorderSide(color: accent, width: 3)),
           boxShadow: [
             BoxShadow(
               color: accent.withValues(alpha: 0.12),
@@ -435,134 +464,69 @@ class _FeaturedDoctorCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CircleAvatar(
-              radius: 32,
-              backgroundColor: accent.withValues(alpha: 0.12),
-              backgroundImage: doctor.fotoUrl != null
-                  ? NetworkImage(doctor.fotoUrl!)
-                  : null,
-              child: doctor.fotoUrl == null
-                  ? Icon(Icons.person, color: accent)
-                  : null,
-            ),
-            const SizedBox(height: 12),
-            Text(
-              doctor.nombre,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              doctor.especialidades.isNotEmpty
-                  ? doctor.especialidades.first.nombre
-                  : '',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
-            ),
-            const Spacer(),
-            Row(
+            Stack(
               children: [
-                Icon(
-                  Icons.location_on_outlined,
-                  size: 14,
-                  color: Colors.grey.shade500,
+                ClipRRect(
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(20),
+                  ),
+                  child: SizedBox(
+                    width: 160,
+                    height: 110,
+                    child: doctor.fotoUrl != null
+                        ? Image.network(doctor.fotoUrl!, fit: BoxFit.cover)
+                        : Container(
+                            color: accent.withValues(alpha: 0.12),
+                            child: Icon(Icons.person, color: accent, size: 40),
+                          ),
+                  ),
                 ),
-                const SizedBox(width: 2),
-                Expanded(
-                  child: Text(
-                    doctor.ciudad.nombre,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(color: Colors.grey.shade500, fontSize: 11),
+                Positioned(
+                  right: 6,
+                  top: 6,
+                  child: InkWell(
+                    onTap: () => toggleFavoriteDoctor(ref, doctor.id),
+                    borderRadius: BorderRadius.circular(14),
+                    child: Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        isFavorito ? Icons.favorite : Icons.favorite_border,
+                        size: 16,
+                        color: isFavorito ? kMedpheHeartColor : Colors.black26,
+                      ),
+                    ),
                   ),
                 ),
               ],
             ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _ResultadosList extends StatelessWidget {
-  const _ResultadosList({required this.doctores});
-
-  final List<Doctor> doctores;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.separated(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
-      itemCount: doctores.length,
-      separatorBuilder: (context, index) => const SizedBox(height: 12),
-      itemBuilder: (context, index) => _DoctorCard(
-        doctor: doctores[index],
-        accent: kCategoryPalette[index % kCategoryPalette.length],
-      ),
-    );
-  }
-}
-
-class _DoctorCard extends StatelessWidget {
-  const _DoctorCard({required this.doctor, required this.accent});
-
-  final Doctor doctor;
-  final Color accent;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () => context.push('/doctors/${doctor.id}'),
-      borderRadius: BorderRadius.circular(20),
-      child: Container(
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          border: Border(left: BorderSide(color: accent, width: 3)),
-          boxShadow: [
-            BoxShadow(
-              color: accent.withValues(alpha: 0.1),
-              blurRadius: 14,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            CircleAvatar(
-              radius: 28,
-              backgroundColor: accent.withValues(alpha: 0.12),
-              backgroundImage: doctor.fotoUrl != null
-                  ? NetworkImage(doctor.fotoUrl!)
-                  : null,
-              child: doctor.fotoUrl == null
-                  ? Icon(Icons.person, color: accent)
-                  : null,
-            ),
-            const SizedBox(width: 14),
-            Expanded(
+            Padding(
+              padding: const EdgeInsets.fromLTRB(12, 10, 12, 14),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     doctor.nombre,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                       fontWeight: FontWeight.w700,
-                      fontSize: 15,
+                      fontSize: 14,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    doctor.especialidades.map((e) => e.nombre).join(', '),
+                    doctor.especialidades.isNotEmpty
+                        ? doctor.especialidades.first.nombre
+                        : '',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
+                    style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
                   ),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 8),
                   Row(
                     children: [
                       Icon(
@@ -571,50 +535,21 @@ class _DoctorCard extends StatelessWidget {
                         color: Colors.grey.shade500,
                       ),
                       const SizedBox(width: 2),
-                      Text(
-                        doctor.ciudad.nombre,
-                        style: TextStyle(
-                          color: Colors.grey.shade500,
-                          fontSize: 12,
+                      Expanded(
+                        child: Text(
+                          doctor.ciudad.nombre,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: Colors.grey.shade500,
+                            fontSize: 11,
+                          ),
                         ),
                       ),
                     ],
                   ),
                 ],
               ),
-            ),
-            const Icon(Icons.chevron_right, color: Colors.black26),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _EmptyState extends StatelessWidget {
-  const _EmptyState();
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.search_off, size: 48, color: Colors.grey.shade400),
-            const SizedBox(height: 16),
-            Text(
-              'Sin resultados',
-              style: Theme.of(
-                context,
-              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              'Intenta con otra especialidad, ciudad o nombre.',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.grey.shade600),
             ),
           ],
         ),

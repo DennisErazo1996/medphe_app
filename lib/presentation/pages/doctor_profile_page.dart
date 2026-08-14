@@ -4,8 +4,9 @@ import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../domain/entities/doctor.dart';
-import '../../main.dart';
 import '../providers/providers.dart';
+import '../theme/app_theme.dart';
+import '../widgets/widgets.dart';
 
 class DoctorProfilePage extends ConsumerWidget {
   const DoctorProfilePage({super.key, required this.doctorId});
@@ -40,7 +41,7 @@ class DoctorProfilePage extends ConsumerWidget {
   }
 }
 
-class _DoctorProfileContent extends StatelessWidget {
+class _DoctorProfileContent extends ConsumerWidget {
   const _DoctorProfileContent({required this.doctor});
 
   final Doctor doctor;
@@ -57,7 +58,11 @@ class _DoctorProfileContent extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isFavorito = ref
+        .watch(favoriteDoctorIdsProvider)
+        .contains(doctor.id);
+
     return Stack(
       children: [
         ListView(
@@ -65,7 +70,7 @@ class _DoctorProfileContent extends StatelessWidget {
           children: [
             Row(
               children: [
-                _CircleIconButton(
+                CircleIconButton(
                   icon: Icons.arrow_back,
                   onPressed: () => context.pop(),
                 ),
@@ -160,6 +165,13 @@ class _DoctorProfileContent extends StatelessWidget {
                       ],
                     ),
                   ),
+                  _QuickActionButton(
+                    icon: isFavorito ? Icons.favorite : Icons.favorite_border,
+                    color: isFavorito ? kMedpheHeartColor : Colors.grey.shade300,
+                    iconColor: isFavorito ? Colors.white : Colors.grey.shade600,
+                    onPressed: () => toggleFavoriteDoctor(ref, doctor.id),
+                  ),
+                  const SizedBox(width: 8),
                   _QuickActionButton(
                     icon: Icons.chat_bubble,
                     color: const Color(0xFF25D366),
@@ -260,34 +272,17 @@ class _DoctorProfileContent extends StatelessWidget {
   }
 }
 
-class _CircleIconButton extends StatelessWidget {
-  const _CircleIconButton({required this.icon, required this.onPressed});
-
-  final IconData icon;
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.white,
-      shape: const CircleBorder(),
-      child: IconButton(
-        icon: Icon(icon, color: Colors.black87),
-        onPressed: onPressed,
-      ),
-    );
-  }
-}
-
 class _QuickActionButton extends StatelessWidget {
   const _QuickActionButton({
     required this.icon,
     required this.color,
     required this.onPressed,
+    this.iconColor = Colors.white,
   });
 
   final IconData icon;
   final Color color;
+  final Color iconColor;
   final VoidCallback onPressed;
 
   @override
@@ -300,7 +295,7 @@ class _QuickActionButton extends StatelessWidget {
         onTap: onPressed,
         child: Padding(
           padding: const EdgeInsets.all(10),
-          child: Icon(icon, color: Colors.white, size: 18),
+          child: Icon(icon, color: iconColor, size: 18),
         ),
       ),
     );
