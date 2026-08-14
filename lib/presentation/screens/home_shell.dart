@@ -23,6 +23,7 @@ class _HomeShellState extends ConsumerState<HomeShell> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: kMedpheSurface,
+      extendBody: true,
       body: IndexedStack(
         index: _index,
         children: const [HomeScreen(), FavoritesScreen()],
@@ -52,45 +53,63 @@ class _MedpheBottomNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      top: false,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(24, 0, 24, 12),
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(28),
-            boxShadow: [
-              BoxShadow(
-                color: kMedphePrimary.withValues(alpha: 0.14),
-                blurRadius: 24,
-                offset: const Offset(0, 12),
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            kMedpheSurface.withValues(alpha: 0),
+            kMedpheSurface.withValues(alpha: 0.85),
+            kMedpheSurface,
+          ],
+          stops: const [0, 0.5, 1],
+        ),
+      ),
+      child: SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(24, 28, 24, 12),
+          child: Center(
+            heightFactor: 1,
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(28),
+                boxShadow: [
+                  BoxShadow(
+                    color: kMedphePrimary.withValues(alpha: 0.14),
+                    blurRadius: 24,
+                    offset: const Offset(0, 12),
+                  ),
+                ],
               ),
-            ],
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              _NavItem(
-                icon: Icons.home_rounded,
-                label: 'Inicio',
-                selected: currentIndex == 0,
-                onTap: onHome,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                spacing: 4,
+                children: [
+                  _NavItem(
+                    icon: Icons.home_rounded,
+                    label: 'Inicio',
+                    selected: currentIndex == 0,
+                    onTap: onHome,
+                  ),
+                  _NavItem(
+                    icon: Icons.search_rounded,
+                    label: 'Buscar',
+                    selected: false,
+                    onTap: onSearch,
+                  ),
+                  _NavItem(
+                    icon: Icons.favorite_rounded,
+                    label: 'Favoritos',
+                    selected: currentIndex == 1,
+                    onTap: onFavorites,
+                  ),
+                ],
               ),
-              _NavItem(
-                icon: Icons.search_rounded,
-                label: 'Buscar',
-                selected: false,
-                onTap: onSearch,
-              ),
-              _NavItem(
-                icon: Icons.favorite_rounded,
-                label: 'Favoritos',
-                selected: currentIndex == 1,
-                onTap: onFavorites,
-              ),
-            ],
+            ),
           ),
         ),
       ),

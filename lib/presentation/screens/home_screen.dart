@@ -104,7 +104,12 @@ class _FilteredResults extends ConsumerWidget {
                     message: 'Intenta con otra especialidad, ciudad o nombre.',
                   )
                 : ListView.separated(
-                    padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+                    padding: EdgeInsets.fromLTRB(
+                      20,
+                      8,
+                      20,
+                      MediaQuery.paddingOf(context).bottom + 24,
+                    ),
                     itemCount: doctores.length,
                     separatorBuilder: (context, index) =>
                         const SizedBox(height: 12),
@@ -157,6 +162,9 @@ class _HomeContent extends ConsumerWidget {
           child: _SectionHeader(title: 'Más servicios'),
         ),
         const SliverToBoxAdapter(child: _ServicesGrid()),
+        SliverToBoxAdapter(
+          child: SizedBox(height: MediaQuery.paddingOf(context).bottom + 16),
+        ),
       ],
     );
   }
