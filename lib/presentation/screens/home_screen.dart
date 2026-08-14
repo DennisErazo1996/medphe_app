@@ -543,10 +543,12 @@ class _FeaturedDoctorsCarousel extends StatelessWidget {
     if (doctores.isEmpty) return const SizedBox.shrink();
 
     return SizedBox(
-      height: 216,
+      height: 264,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 20),
+        // Padding vertical para que la sombra de las cards (blur 20,
+        // offset 10) no se recorte contra la siguiente sección.
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 28),
         itemCount: doctores.length,
         separatorBuilder: (context, index) => const SizedBox(width: 14),
         itemBuilder: (context, index) => _FeaturedDoctorCard(
@@ -567,67 +569,109 @@ class _FeaturedDoctorCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isFavorito = ref.watch(favoriteDoctorIdsProvider).contains(doctor.id);
+    final especialidad = doctor.especialidades.isNotEmpty
+        ? doctor.especialidades.first.nombre
+        : 'Medicina general';
 
     return InkWell(
       onTap: () => context.push('/doctors/${doctor.id}'),
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(22),
       child: Container(
-        width: 160,
+        width: 172,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(22),
+          border: Border.all(color: Colors.black.withValues(alpha: 0.05)),
           boxShadow: [
             BoxShadow(
-              color: accent.withValues(alpha: 0.12),
-              blurRadius: 16,
-              offset: const Offset(0, 8),
+              color: accent.withValues(alpha: 0.14),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
             ),
           ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Stack(
-              children: [
-                ClipRRect(
-                  borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(20),
+            // Foto con badge de especialidad y favorito superpuestos.
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: SizedBox(
+                      width: 156,
+                      height: 118,
+                      child: doctor.fotoUrl != null
+                          ? Image.network(doctor.fotoUrl!, fit: BoxFit.cover)
+                          : Container(
+                              color: accent.withValues(alpha: 0.12),
+                              child: Icon(
+                                Icons.person,
+                                color: accent,
+                                size: 40,
+                              ),
+                            ),
+                    ),
                   ),
-                  child: SizedBox(
-                    width: 160,
-                    height: 110,
-                    child: doctor.fotoUrl != null
-                        ? Image.network(doctor.fotoUrl!, fit: BoxFit.cover)
-                        : Container(
-                            color: accent.withValues(alpha: 0.12),
-                            child: Icon(Icons.person, color: accent, size: 40),
-                          ),
-                  ),
-                ),
-                Positioned(
-                  right: 6,
-                  top: 6,
-                  child: InkWell(
-                    onTap: () => toggleFavoriteDoctor(ref, doctor.id),
-                    borderRadius: BorderRadius.circular(14),
-                    child: Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        isFavorito ? Icons.favorite : Icons.favorite_border,
-                        size: 16,
-                        color: isFavorito ? kMedpheHeartColor : Colors.black26,
+                  Positioned(
+                    right: 8,
+                    top: 8,
+                    child: InkWell(
+                      onTap: () => toggleFavoriteDoctor(ref, doctor.id),
+                      customBorder: const CircleBorder(),
+                      child: Container(
+                        padding: const EdgeInsets.all(7),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.9),
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.08),
+                              blurRadius: 8,
+                            ),
+                          ],
+                        ),
+                        child: Icon(
+                          isFavorito ? Icons.favorite : Icons.favorite_border,
+                          size: 16,
+                          color: isFavorito
+                              ? kMedpheHeartColor
+                              : Colors.black38,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                  Positioned(
+                    left: 8,
+                    bottom: 8,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 5,
+                      ),
+                      decoration: BoxDecoration(
+                        color: accent,
+                        borderRadius: BorderRadius.circular(100),
+                      ),
+                      child: Text(
+                        especialidad,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(12, 10, 12, 14),
+              padding: const EdgeInsets.fromLTRB(14, 2, 14, 14),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -640,16 +684,7 @@ class _FeaturedDoctorCard extends ConsumerWidget {
                       fontSize: 14,
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    doctor.especialidades.isNotEmpty
-                        ? doctor.especialidades.first.nombre
-                        : '',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
-                  ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 6),
                   Row(
                     children: [
                       Icon(
@@ -657,7 +692,7 @@ class _FeaturedDoctorCard extends ConsumerWidget {
                         size: 14,
                         color: Colors.grey.shade500,
                       ),
-                      const SizedBox(width: 2),
+                      const SizedBox(width: 3),
                       Expanded(
                         child: Text(
                           doctor.ciudad.nombre,
@@ -666,7 +701,21 @@ class _FeaturedDoctorCard extends ConsumerWidget {
                           style: TextStyle(
                             color: Colors.grey.shade500,
                             fontSize: 11,
+                            fontWeight: FontWeight.w500,
                           ),
+                        ),
+                      ),
+                      Container(
+                        width: 26,
+                        height: 26,
+                        decoration: BoxDecoration(
+                          color: accent.withValues(alpha: 0.12),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.arrow_forward_rounded,
+                          size: 14,
+                          color: accent,
                         ),
                       ),
                     ],
