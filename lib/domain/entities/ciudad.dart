@@ -5,9 +5,6 @@ class Ciudad {
   final String nombre;
 
   factory Ciudad.fromJson(Map<String, dynamic> json) {
-    return Ciudad(
-      id: json['id'] as String,
-      nombre: json['nombre'] as String,
-    );
+    return Ciudad(id: json['id'] as String, nombre: json['nombre'] as String);
   }
 }

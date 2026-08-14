@@ -19,7 +19,8 @@ final doctoresDummy = <Doctor>[
   Doctor(
     id: 'doc-1',
     nombre: 'Dra. María Fernanda López',
-    fotoUrl: 'https://i.pravatar.cc/300?img=1',
+    fotoUrl:
+        'https://images.unsplash.com/photo-1685688739798-bce206ab6b42?auto=format&fit=crop&w=400&q=80',
     especialidades: [especialidadesDummy[0]],
     ciudad: ciudadesDummy[0],
     whatsappNumero: '593987654321',
@@ -33,7 +34,8 @@ final doctoresDummy = <Doctor>[
   Doctor(
     id: 'doc-2',
     nombre: 'Dr. Carlos Andrade',
-    fotoUrl: 'https://i.pravatar.cc/300?img=12',
+    fotoUrl:
+        'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=400&q=80',
     especialidades: [especialidadesDummy[1]],
     ciudad: ciudadesDummy[1],
     whatsappNumero: '593987654322',
@@ -47,7 +49,8 @@ final doctoresDummy = <Doctor>[
   Doctor(
     id: 'doc-3',
     nombre: 'Dra. Paola Vintimilla',
-    fotoUrl: 'https://i.pravatar.cc/300?img=5',
+    fotoUrl:
+        'https://images.unsplash.com/photo-1721674098745-7d1b76e0fc02?auto=format&fit=crop&w=400&q=80',
     especialidades: [especialidadesDummy[2]],
     ciudad: ciudadesDummy[2],
     whatsappNumero: '593987654323',
@@ -61,7 +64,8 @@ final doctoresDummy = <Doctor>[
   Doctor(
     id: 'doc-4',
     nombre: 'Dr. Jorge Salazar',
-    fotoUrl: 'https://i.pravatar.cc/300?img=15',
+    fotoUrl:
+        'https://images.unsplash.com/photo-1612531385446-f7e6d131e1d0?auto=format&fit=crop&w=400&q=80',
     especialidades: [especialidadesDummy[0], especialidadesDummy[3]],
     ciudad: ciudadesDummy[0],
     whatsappNumero: '593987654324',
@@ -75,7 +79,8 @@ final doctoresDummy = <Doctor>[
   Doctor(
     id: 'doc-5',
     nombre: 'Dra. Ana Belén Torres',
-    fotoUrl: 'https://i.pravatar.cc/300?img=9',
+    fotoUrl:
+        'https://images.unsplash.com/photo-1712744626457-3ffa4ba32c8c?auto=format&fit=crop&w=400&q=80',
     especialidades: [especialidadesDummy[3]],
     ciudad: ciudadesDummy[1],
     whatsappNumero: '593987654325',
@@ -89,7 +94,8 @@ final doctoresDummy = <Doctor>[
   Doctor(
     id: 'doc-6',
     nombre: 'Dr. Luis Chamorro',
-    fotoUrl: 'https://i.pravatar.cc/300?img=33',
+    fotoUrl:
+        'https://images.unsplash.com/photo-1612349316228-5942a9b489c2?auto=format&fit=crop&w=400&q=80',
     especialidades: [especialidadesDummy[1]],
     ciudad: ciudadesDummy[2],
     whatsappNumero: '593987654326',
@@ -103,7 +109,8 @@ final doctoresDummy = <Doctor>[
   Doctor(
     id: 'doc-7',
     nombre: 'Dra. Verónica Peralta',
-    fotoUrl: 'https://i.pravatar.cc/300?img=20',
+    fotoUrl:
+        'https://images.unsplash.com/photo-1758600587839-56ba05596c69?auto=format&fit=crop&w=400&q=80',
     especialidades: [especialidadesDummy[2]],
     ciudad: ciudadesDummy[1],
     whatsappNumero: '593987654327',
@@ -117,7 +124,8 @@ final doctoresDummy = <Doctor>[
   Doctor(
     id: 'doc-8',
     nombre: 'Dr. Esteban Ríos',
-    fotoUrl: 'https://i.pravatar.cc/300?img=52',
+    fotoUrl:
+        'https://images.unsplash.com/photo-1612523138351-4643808db8f3?auto=format&fit=crop&w=400&q=80',
     especialidades: [especialidadesDummy[0]],
     ciudad: ciudadesDummy[2],
     whatsappNumero: '593987654328',

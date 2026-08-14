@@ -13,9 +13,7 @@ class DoctorCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isFavorito = ref
-        .watch(favoriteDoctorIdsProvider)
-        .contains(doctor.id);
+    final isFavorito = ref.watch(favoriteDoctorIdsProvider).contains(doctor.id);
 
     return InkWell(
       onTap: () => context.push('/doctors/${doctor.id}'),

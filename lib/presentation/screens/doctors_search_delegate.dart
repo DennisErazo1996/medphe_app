@@ -12,8 +12,9 @@ void openDoctorsSearch(BuildContext context, WidgetRef ref) {
     delegate: DoctorsSearchDelegate(
       onSubmit: (nombre) {
         final current = ref.read(doctorsSearchFilterProvider);
-        ref.read(doctorsSearchFilterProvider.notifier).state = current
-            .copyWith(nombre: () => nombre);
+        ref.read(doctorsSearchFilterProvider.notifier).state = current.copyWith(
+          nombre: () => nombre,
+        );
       },
     ),
   );
@@ -28,10 +29,7 @@ class DoctorsSearchDelegate extends SearchDelegate<String?> {
   List<Widget> buildActions(BuildContext context) {
     return [
       if (query.isNotEmpty)
-        IconButton(
-          icon: const Icon(Icons.clear),
-          onPressed: () => query = '',
-        ),
+        IconButton(icon: const Icon(Icons.clear), onPressed: () => query = ''),
     ];
   }
 

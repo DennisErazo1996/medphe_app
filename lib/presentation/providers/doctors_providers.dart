@@ -35,27 +35,30 @@ class DoctorsSearchFilter {
     String? Function()? nombre,
   }) {
     return DoctorsSearchFilter(
-      especialidadId:
-          especialidadId != null ? especialidadId() : this.especialidadId,
+      especialidadId: especialidadId != null
+          ? especialidadId()
+          : this.especialidadId,
       ciudadId: ciudadId != null ? ciudadId() : this.ciudadId,
       nombre: nombre != null ? nombre() : this.nombre,
     );
   }
 }
 
-final doctorsSearchFilterProvider =
-    StateProvider<DoctorsSearchFilter>((ref) => const DoctorsSearchFilter());
+final doctorsSearchFilterProvider = StateProvider<DoctorsSearchFilter>(
+  (ref) => const DoctorsSearchFilter(),
+);
 
 final doctorsSearchResultsProvider = FutureProvider<List<Doctor>>((ref) {
   final filter = ref.watch(doctorsSearchFilterProvider);
-  return ref.watch(doctorsRepositoryProvider).searchDoctors(
+  return ref
+      .watch(doctorsRepositoryProvider)
+      .searchDoctors(
         especialidadId: filter.especialidadId,
         ciudadId: filter.ciudadId,
         nombre: filter.nombre,
       );
 });
 
-final doctorByIdProvider =
-    FutureProvider.family<Doctor, String>((ref, id) {
+final doctorByIdProvider = FutureProvider.family<Doctor, String>((ref, id) {
   return ref.watch(doctorsRepositoryProvider).getDoctorById(id);
 });

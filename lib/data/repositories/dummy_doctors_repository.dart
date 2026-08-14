@@ -28,11 +28,12 @@ class DummyDoctorsRepository implements DoctorsRepository {
     await Future.delayed(_latencia);
     final nombreBusqueda = nombre?.trim().toLowerCase();
     return doctoresDummy.where((doctor) {
-      final coincideEspecialidad = especialidadId == null ||
+      final coincideEspecialidad =
+          especialidadId == null ||
           doctor.especialidades.any((e) => e.id == especialidadId);
-      final coincideCiudad =
-          ciudadId == null || doctor.ciudad.id == ciudadId;
-      final coincideNombre = nombreBusqueda == null ||
+      final coincideCiudad = ciudadId == null || doctor.ciudad.id == ciudadId;
+      final coincideNombre =
+          nombreBusqueda == null ||
           nombreBusqueda.isEmpty ||
           doctor.nombre.toLowerCase().contains(nombreBusqueda);
       return coincideEspecialidad && coincideCiudad && coincideNombre;

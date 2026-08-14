@@ -6,15 +6,11 @@ import '../screens/screens.dart';
 final appRouter = GoRouter(
   initialLocation: '/',
   routes: [
-    GoRoute(
-      path: '/',
-      builder: (context, state) => const HomeShell(),
-    ),
+    GoRoute(path: '/', builder: (context, state) => const HomeShell()),
     GoRoute(
       path: '/doctors/:id',
-      builder: (context, state) => DoctorProfilePage(
-        doctorId: state.pathParameters['id']!,
-      ),
+      builder: (context, state) =>
+          DoctorProfilePage(doctorId: state.pathParameters['id']!),
     ),
   ],
 );

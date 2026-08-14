@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 const kMedphePrimary = Color(0xFF1D2EEC);
 const kMedpheSecondary = Color(0xFF6C1DEC);
@@ -19,9 +20,13 @@ ThemeData buildMedpheTheme() {
     brightness: Brightness.light,
   ).copyWith(secondary: kMedpheSecondary);
 
+  final textTheme = GoogleFonts.poppinsTextTheme();
+
   return ThemeData(
     colorScheme: colorScheme,
     useMaterial3: true,
+    fontFamily: GoogleFonts.poppins().fontFamily,
+    textTheme: textTheme,
     scaffoldBackgroundColor: kMedpheSurface,
     appBarTheme: const AppBarTheme(
       backgroundColor: Colors.transparent,
@@ -46,9 +51,7 @@ ThemeData buildMedpheTheme() {
         fontWeight: FontWeight.w600,
       ),
       side: BorderSide.none,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(100),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
@@ -56,9 +59,7 @@ ThemeData buildMedpheTheme() {
         foregroundColor: Colors.white,
         elevation: 0,
         padding: const EdgeInsets.symmetric(vertical: 16),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(14),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         textStyle: const TextStyle(fontWeight: FontWeight.w600),
       ),
     ),

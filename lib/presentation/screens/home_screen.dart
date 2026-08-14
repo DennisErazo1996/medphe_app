@@ -154,19 +154,9 @@ class _HomeContent extends ConsumerWidget {
           child: _FeaturedDoctorsCarousel(doctores: destacados),
         ),
         const SliverToBoxAdapter(
-          child: _SectionHeader(title: 'Todos los médicos'),
+          child: _SectionHeader(title: 'Más servicios'),
         ),
-        SliverPadding(
-          padding: const EdgeInsets.fromLTRB(20, 4, 20, 24),
-          sliver: SliverList.separated(
-            itemCount: doctores.length,
-            separatorBuilder: (context, index) => const SizedBox(height: 12),
-            itemBuilder: (context, index) => DoctorCard(
-              doctor: doctores[index],
-              accent: kCategoryPalette[index % kCategoryPalette.length],
-            ),
-          ),
-        ),
+        const SliverToBoxAdapter(child: _ServicesGrid()),
       ],
     );
   }
@@ -408,6 +398,141 @@ class _SpecialtyTile extends StatelessWidget {
   }
 }
 
+class _ServiceItem {
+  const _ServiceItem({required this.nombre, required this.icon});
+
+  final String nombre;
+  final IconData icon;
+}
+
+/// Grid de accesos rápidos a los demás servicios de Medphe (hospitales,
+/// laboratorio, ambulancia, etc.) con un botón final para ver el catálogo
+/// completo de servicios.
+class _ServicesGrid extends StatelessWidget {
+  const _ServicesGrid();
+
+  static const _servicios = [
+    _ServiceItem(nombre: 'Hospitales', icon: Icons.local_hospital_outlined),
+    _ServiceItem(nombre: 'Laboratorio', icon: Icons.biotech_outlined),
+    _ServiceItem(nombre: 'Ambulancia', icon: Icons.emergency_outlined),
+    _ServiceItem(nombre: 'Farmacias', icon: Icons.local_pharmacy_outlined),
+    _ServiceItem(nombre: 'Cita en casa', icon: Icons.home_outlined),
+    _ServiceItem(nombre: 'Enfermería', icon: Icons.vaccines_outlined),
+  ];
+
+  void _proximamente(BuildContext context, String nombre) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text('$nombre: próximamente')));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 4, 20, 24),
+      child: Column(
+        children: [
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            padding: EdgeInsets.zero,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 12,
+              crossAxisSpacing: 12,
+              childAspectRatio: 1.9,
+            ),
+            itemCount: _servicios.length,
+            itemBuilder: (context, index) {
+              final servicio = _servicios[index];
+              return _ServiceTile(
+                nombre: servicio.nombre,
+                icon: servicio.icon,
+                color: kCategoryPalette[index % kCategoryPalette.length],
+                onTap: () => _proximamente(context, servicio.nombre),
+              );
+            },
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            height: 52,
+            child: FilledButton.icon(
+              onPressed: () => _proximamente(context, 'Todos los servicios'),
+              style: FilledButton.styleFrom(
+                backgroundColor: kMedphePrimary,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+              ),
+              icon: const Icon(Icons.grid_view_rounded, size: 20),
+              label: const Text(
+                'Ver todos los servicios',
+                style: TextStyle(fontWeight: FontWeight.w700),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ServiceTile extends StatelessWidget {
+  const _ServiceTile({
+    required this.nombre,
+    required this.icon,
+    required this.color,
+    required this.onTap,
+  });
+
+  final String nombre;
+  final IconData icon;
+  final Color color;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(18),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: Colors.black.withValues(alpha: 0.06)),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 42,
+              height: 42,
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.12),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, color: color, size: 22),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                nombre,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _FeaturedDoctorsCarousel extends StatelessWidget {
   const _FeaturedDoctorsCarousel({required this.doctores});
 
@@ -441,9 +566,7 @@ class _FeaturedDoctorCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isFavorito = ref
-        .watch(favoriteDoctorIdsProvider)
-        .contains(doctor.id);
+    final isFavorito = ref.watch(favoriteDoctorIdsProvider).contains(doctor.id);
 
     return InkWell(
       onTap: () => context.push('/doctors/${doctor.id}'),

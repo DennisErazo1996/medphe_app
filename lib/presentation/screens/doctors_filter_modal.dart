@@ -56,8 +56,8 @@ class _DoctorsFilterForm extends ConsumerWidget {
               ),
             ],
             onChanged: (value) {
-              ref.read(doctorsSearchFilterProvider.notifier).state =
-                  filter.copyWith(especialidadId: () => value);
+              ref.read(doctorsSearchFilterProvider.notifier).state = filter
+                  .copyWith(especialidadId: () => value);
             },
           ),
           loading: () => const LinearProgressIndicator(),
@@ -81,8 +81,8 @@ class _DoctorsFilterForm extends ConsumerWidget {
               ),
             ],
             onChanged: (value) {
-              ref.read(doctorsSearchFilterProvider.notifier).state =
-                  filter.copyWith(ciudadId: () => value);
+              ref.read(doctorsSearchFilterProvider.notifier).state = filter
+                  .copyWith(ciudadId: () => value);
             },
           ),
           loading: () => const LinearProgressIndicator(),
