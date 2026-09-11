@@ -16,6 +16,7 @@ class HomeScreen extends ConsumerWidget {
   bool _tieneFiltroActivo(DoctorsSearchFilter filter) {
     return filter.especialidadId != null ||
         filter.ciudadId != null ||
+        filter.centroMedicoId != null ||
         (filter.nombre != null && filter.nombre!.isNotEmpty);
   }
 
@@ -101,7 +102,8 @@ class _FilteredResults extends ConsumerWidget {
                 ? const EmptyState(
                     icon: Icons.search_off,
                     title: 'Sin resultados',
-                    message: 'Intenta con otra especialidad, ciudad o nombre.',
+                    message:
+                        'Intenta con otra especialidad, ciudad, centro médico o nombre.',
                   )
                 : ListView.separated(
                     padding: EdgeInsets.fromLTRB(
@@ -524,7 +526,13 @@ class _ServicesGrid extends StatelessWidget {
                 nombre: servicio.nombre,
                 icon: servicio.icon,
                 color: kCategoryPalette[index % kCategoryPalette.length],
-                onTap: () => _proximamente(context, servicio.nombre),
+                onTap: () {
+                  if (servicio.nombre == 'Hospitales') {
+                    context.push('/centros-medicos');
+                  } else {
+                    _proximamente(context, servicio.nombre);
+                  }
+                },
               );
             },
           ),

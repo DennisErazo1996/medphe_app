@@ -12,5 +12,14 @@ final appRouter = GoRouter(
       builder: (context, state) =>
           DoctorProfilePage(doctorId: state.pathParameters['id']!),
     ),
+    GoRoute(
+      path: '/centros-medicos',
+      builder: (context, state) => const CentrosMedicosScreen(),
+    ),
+    GoRoute(
+      path: '/centros-medicos/:id',
+      builder: (context, state) =>
+          CentroMedicoDetailPage(centroId: state.pathParameters['id']!),
+    ),
   ],
 );

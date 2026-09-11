@@ -69,22 +69,28 @@ class _DoctorProfileContent extends ConsumerWidget {
               pinned: true,
               stretch: true,
               expandedHeight: 320,
+              toolbarHeight: 64,
+              leadingWidth: 68,
               backgroundColor: kMedphePrimary,
               foregroundColor: Colors.white,
-              leading: Padding(
-                padding: const EdgeInsets.only(left: 12, top: 8),
-                child: CircleIconButton(
-                  icon: Icons.arrow_back,
-                  onPressed: () => context.pop(),
+              leading: Center(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 14),
+                  child: CircleIconButton(
+                    icon: Icons.arrow_back,
+                    onPressed: () => context.pop(),
+                  ),
                 ),
               ),
               actions: [
                 Padding(
-                  padding: const EdgeInsets.only(right: 12, top: 8),
-                  child: CircleIconButton(
-                    icon: isFavorito ? Icons.favorite : Icons.favorite_border,
-                    iconColor: isFavorito ? kMedpheHeartColor : Colors.black87,
-                    onPressed: () => toggleFavoriteDoctor(ref, doctor.id),
+                  padding: const EdgeInsets.only(right: 16),
+                  child: Center(
+                    child: CircleIconButton(
+                      icon: isFavorito ? Icons.favorite : Icons.favorite_border,
+                      iconColor: isFavorito ? kMedpheHeartColor : Colors.black87,
+                      onPressed: () => toggleFavoriteDoctor(ref, doctor.id),
+                    ),
                   ),
                 ),
               ],

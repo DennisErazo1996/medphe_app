@@ -15,6 +15,7 @@ class Doctor {
     required this.atiendeEn,
     required this.serviciosMedicos,
     required this.atencionAvanzadaPacientesCon,
+    this.centrosMedicosIds = const [],
   });
 
   final String id;
@@ -29,6 +30,7 @@ class Doctor {
   final List<String> atiendeEn;
   final List<String> serviciosMedicos;
   final List<String> atencionAvanzadaPacientesCon;
+  final List<String> centrosMedicosIds;
 
   factory Doctor.fromJson(Map<String, dynamic> json) {
     return Doctor(
@@ -47,6 +49,8 @@ class Doctor {
       serviciosMedicos: (json['serviciosMedicos'] as List).cast<String>(),
       atencionAvanzadaPacientesCon:
           (json['atencionAvanzadaPacientesCon'] as List).cast<String>(),
+      centrosMedicosIds:
+          (json['centrosMedicosIds'] as List?)?.cast<String>() ?? const [],
     );
   }
 }

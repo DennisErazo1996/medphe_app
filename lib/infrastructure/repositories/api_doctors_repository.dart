@@ -71,6 +71,7 @@ class ApiDoctorsRepository implements DoctorsRepository {
   Future<List<Doctor>> searchDoctors({
     String? especialidadId,
     String? ciudadId,
+    String? centroMedicoId,
     String? nombre,
   }) async {
     final doctores = await _getDoctores();
@@ -81,11 +82,19 @@ class ApiDoctorsRepository implements DoctorsRepository {
           especialidadId == null ||
           doctor.especialidades.any((e) => e.id == especialidadId);
       final coincideCiudad = ciudadId == null || doctor.ciudad.id == ciudadId;
+      final coincideCentro = centroMedicoId == null ||
+          doctor.centrosMedicosIds.contains(centroMedicoId) ||
+          doctor.atiendeEn.any((c) =>
+              c.toLowerCase() == centroMedicoId.toLowerCase() ||
+              c.toLowerCase().contains(centroMedicoId.toLowerCase()));
       final coincideNombre =
           nombreBusqueda == null ||
           nombreBusqueda.isEmpty ||
           doctor.nombre.toLowerCase().contains(nombreBusqueda);
-      return coincideEspecialidad && coincideCiudad && coincideNombre;
+      return coincideEspecialidad &&
+          coincideCiudad &&
+          coincideCentro &&
+          coincideNombre;
     }).toList();
   }
 

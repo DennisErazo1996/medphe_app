@@ -25,15 +25,22 @@ final allDoctorsProvider = FutureProvider<List<Doctor>>((ref) {
 });
 
 class DoctorsSearchFilter {
-  const DoctorsSearchFilter({this.especialidadId, this.ciudadId, this.nombre});
+  const DoctorsSearchFilter({
+    this.especialidadId,
+    this.ciudadId,
+    this.centroMedicoId,
+    this.nombre,
+  });
 
   final String? especialidadId;
   final String? ciudadId;
+  final String? centroMedicoId;
   final String? nombre;
 
   DoctorsSearchFilter copyWith({
     String? Function()? especialidadId,
     String? Function()? ciudadId,
+    String? Function()? centroMedicoId,
     String? Function()? nombre,
   }) {
     return DoctorsSearchFilter(
@@ -41,6 +48,9 @@ class DoctorsSearchFilter {
           ? especialidadId()
           : this.especialidadId,
       ciudadId: ciudadId != null ? ciudadId() : this.ciudadId,
+      centroMedicoId: centroMedicoId != null
+          ? centroMedicoId()
+          : this.centroMedicoId,
       nombre: nombre != null ? nombre() : this.nombre,
     );
   }
@@ -57,6 +67,7 @@ final doctorsSearchResultsProvider = FutureProvider<List<Doctor>>((ref) {
       .searchDoctors(
         especialidadId: filter.especialidadId,
         ciudadId: filter.ciudadId,
+        centroMedicoId: filter.centroMedicoId,
         nombre: filter.nombre,
       );
 });

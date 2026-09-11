@@ -37,6 +37,8 @@ class EspecialistaMapper {
       atiendeEn: model.medicalCenters.map((c) => c.name).toList(),
       serviciosMedicos: model.medicalServices,
       atencionAvanzadaPacientesCon: model.treatedConditions,
+      centrosMedicosIds:
+          model.medicalCenters.map((c) => c.id.toString()).toList(),
     );
   }
 }

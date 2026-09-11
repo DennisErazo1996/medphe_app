@@ -10,6 +10,7 @@ abstract class DoctorsRepository {
   Future<List<Doctor>> searchDoctors({
     String? especialidadId,
     String? ciudadId,
+    String? centroMedicoId,
     String? nombre,
   });
 

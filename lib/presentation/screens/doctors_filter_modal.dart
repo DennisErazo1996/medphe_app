@@ -95,6 +95,18 @@ Future<void> showDoctorsFilterModal(BuildContext context, [WidgetRef? ref]) {
             onClose: () => Navigator.of(modalContext).pop(),
           ),
         ),
+
+        // Página 3: Selector de Centro Médico con buscador
+        WoltModalSheetPage(
+          backgroundColor: kMedpheSurface,
+          surfaceTintColor: Colors.transparent,
+          hasTopBarLayer: false,
+          child: _CentroMedicoSelectionView(
+            pageIndexNotifier: pageIndexNotifier,
+            onBack: () => pageIndexNotifier.value = 0,
+            onClose: () => Navigator.of(modalContext).pop(),
+          ),
+        ),
       ];
     },
   );
@@ -154,6 +166,7 @@ class _FilterActionBar extends ConsumerWidget {
     final filter = ref.watch(doctorsSearchFilterProvider);
     final tieneFiltros = filter.especialidadId != null ||
         filter.ciudadId != null ||
+        filter.centroMedicoId != null ||
         (filter.nombre != null && filter.nombre!.isNotEmpty);
 
     return Container(
@@ -226,6 +239,7 @@ class _DoctorsFilterForm extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final especialidadesAsync = ref.watch(especialidadesProvider);
     final ciudadesAsync = ref.watch(ciudadesProvider);
+    final centrosAsync = ref.watch(allCentrosMedicosProvider);
     final filter = ref.watch(doctorsSearchFilterProvider);
 
     final especialidadSeleccionada = especialidadesAsync.asData?.value
@@ -238,6 +252,12 @@ class _DoctorsFilterForm extends ConsumerWidget {
         .where((c) => c.id == filter.ciudadId)
         .firstOrNull;
     final nombreCiudad = ciudadSeleccionada?.nombre ?? filter.ciudadId;
+
+    final centroSeleccionado = centrosAsync.asData?.value
+        .where((c) => c.id == filter.centroMedicoId)
+        .firstOrNull;
+    final nombreCentro =
+        centroSeleccionado?.displayNombre ?? filter.centroMedicoId;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -264,6 +284,18 @@ class _DoctorsFilterForm extends ConsumerWidget {
           onClear: () {
             ref.read(doctorsSearchFilterProvider.notifier).state =
                 filter.copyWith(ciudadId: () => null);
+          },
+        ),
+        const SizedBox(height: 14),
+        _SelectorTile(
+          icon: Icons.location_city_outlined,
+          label: 'Centro Médico',
+          valueText: nombreCentro ?? 'Todos los centros médicos',
+          isSelected: filter.centroMedicoId != null,
+          onTap: () => pageIndexNotifier.value = 3,
+          onClear: () {
+            ref.read(doctorsSearchFilterProvider.notifier).state =
+                filter.copyWith(centroMedicoId: () => null);
           },
         ),
       ],
@@ -498,6 +530,81 @@ class _CitySelectionView extends ConsumerWidget {
         screenSubtitle: 'Selecciona tu ciudad',
         titleAll: 'Todas las ciudades',
         searchHint: 'Buscar ciudad...',
+        selectedId: null,
+        items: const [],
+        isLoading: false,
+        errorMessage: error.toString(),
+        onBack: onBack,
+        onClose: onClose,
+        onSelected: onSelected,
+      ),
+    );
+  }
+}
+
+class _CentroMedicoSelectionView extends ConsumerWidget {
+  const _CentroMedicoSelectionView({
+    required this.onBack,
+    required this.onClose,
+    required this.pageIndexNotifier,
+  });
+
+  final VoidCallback onBack;
+  final VoidCallback onClose;
+  final ValueNotifier<int> pageIndexNotifier;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final centrosAsync = ref.watch(allCentrosMedicosProvider);
+    final filter = ref.watch(doctorsSearchFilterProvider);
+
+    void onSelected(String? id) {
+      final current = ref.read(doctorsSearchFilterProvider);
+      ref.read(doctorsSearchFilterProvider.notifier).state =
+          current.copyWith(centroMedicoId: () => id);
+      pageIndexNotifier.value = 0;
+    }
+
+    return centrosAsync.when(
+      data: (centros) => _SearchableSelectionView(
+        screenTitle: 'Centro Médico',
+        screenSubtitle: 'Selecciona un centro médico u hospital',
+        titleAll: 'Todos los centros médicos',
+        searchHint: 'Buscar centro médico...',
+        selectedId: filter.centroMedicoId,
+        items: [
+          for (final c in centros)
+            (
+              id: c.id,
+              nombre: c.acronimo.isNotEmpty && c.acronimo != c.nombre
+                  ? '${c.nombre} (${c.acronimo})'
+                  : c.nombre,
+            ),
+        ],
+        isLoading: false,
+        errorMessage: null,
+        onBack: onBack,
+        onClose: onClose,
+        onSelected: onSelected,
+      ),
+      loading: () => _SearchableSelectionView(
+        screenTitle: 'Centro Médico',
+        screenSubtitle: 'Selecciona un centro médico u hospital',
+        titleAll: 'Todos los centros médicos',
+        searchHint: 'Buscar centro médico...',
+        selectedId: null,
+        items: const [],
+        isLoading: true,
+        errorMessage: null,
+        onBack: onBack,
+        onClose: onClose,
+        onSelected: onSelected,
+      ),
+      error: (error, _) => _SearchableSelectionView(
+        screenTitle: 'Centro Médico',
+        screenSubtitle: 'Selecciona un centro médico u hospital',
+        titleAll: 'Todos los centros médicos',
+        searchHint: 'Buscar centro médico...',
         selectedId: null,
         items: const [],
         isLoading: false,
