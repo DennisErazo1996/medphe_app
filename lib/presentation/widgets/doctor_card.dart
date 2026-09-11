@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../domain/entities/doctor.dart';
 import '../providers/favorites_provider.dart';
@@ -50,7 +51,7 @@ class DoctorCard extends ConsumerWidget {
                       doctor.nombre,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: GoogleFonts.poppins(
                         fontWeight: FontWeight.w700,
                         fontSize: 15,
                       ),
@@ -71,7 +72,7 @@ class DoctorCard extends ConsumerWidget {
                         doctor.especialidades.map((e) => e.nombre).join(', '),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
+                        style: GoogleFonts.poppins(
                           color: accent,
                           fontSize: 11.5,
                           fontWeight: FontWeight.w600,
@@ -98,7 +99,7 @@ class DoctorCard extends ConsumerWidget {
                                 : doctor.ciudad.nombre,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
+                            style: GoogleFonts.poppins(
                               color: Colors.grey.shade500,
                               fontSize: 12,
                             ),

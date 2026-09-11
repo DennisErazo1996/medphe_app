@@ -1,37 +1,74 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
 import '../../config/theme/app_theme.dart';
 import '../providers/providers.dart';
 
-Future<void> showDoctorsFilterModal(BuildContext context, WidgetRef ref) {
+Future<void> showDoctorsFilterModal(BuildContext context, [WidgetRef? ref]) {
   final pageIndexNotifier = ValueNotifier<int>(0);
 
   return WoltModalSheet.show<void>(
     context: context,
     useSafeArea: true,
     pageIndexNotifier: pageIndexNotifier,
+    modalTypeBuilder: (context) {
+      return const WoltBottomSheetType(
+        shapeBorder: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+        ),
+        showDragHandle: true,
+      );
+    },
     pageListBuilder: (modalContext) {
       return [
         // Página 0: Filtros principales
         WoltModalSheetPage(
           backgroundColor: kMedpheSurface,
           surfaceTintColor: Colors.transparent,
-          hasTopBarLayer: true,
-          isTopBarLayerAlwaysVisible: true,
-          topBarTitle: const Text(
-            'Filtros',
-            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
-          ),
-          trailingNavBarWidget: Padding(
-            padding: const EdgeInsets.only(right: 12),
-            child: _CloseButton(onPressed: () => Navigator.of(modalContext).pop()),
-          ),
+          hasTopBarLayer: false,
           stickyActionBar: const _FilterActionBar(),
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 8, 20, 140),
-            child: _DoctorsFilterForm(pageIndexNotifier: pageIndexNotifier),
+            padding: const EdgeInsets.fromLTRB(20, 42, 20, 140),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Filtros',
+                            style: GoogleFonts.poppins(
+                              fontSize: 22,
+                              fontWeight: FontWeight.w800,
+                              color: Colors.black87,
+                              letterSpacing: -0.5,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'Personaliza tu búsqueda de médicos',
+                            style: GoogleFonts.poppins(
+                              fontSize: 13,
+                              color: Colors.grey.shade600,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    _CloseButton(onPressed: () => Navigator.of(modalContext).pop()),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                _DoctorsFilterForm(pageIndexNotifier: pageIndexNotifier),
+              ],
+            ),
           ),
         ),
 
@@ -39,27 +76,11 @@ Future<void> showDoctorsFilterModal(BuildContext context, WidgetRef ref) {
         WoltModalSheetPage(
           backgroundColor: kMedpheSurface,
           surfaceTintColor: Colors.transparent,
-          hasTopBarLayer: true,
-          isTopBarLayerAlwaysVisible: true,
-          topBarTitle: const Text(
-            'Especialidad',
-            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
-          ),
-          leadingNavBarWidget: Padding(
-            padding: const EdgeInsets.only(left: 12),
-            child: _BackButton(onPressed: () => pageIndexNotifier.value = 0),
-          ),
-          trailingNavBarWidget: Padding(
-            padding: const EdgeInsets.only(right: 12),
-            child: _CloseButton(onPressed: () => Navigator.of(modalContext).pop()),
-          ),
+          hasTopBarLayer: false,
           child: _SpecialtySelectionView(
-            onSelected: (id) {
-              final filter = ref.read(doctorsSearchFilterProvider);
-              ref.read(doctorsSearchFilterProvider.notifier).state =
-                  filter.copyWith(especialidadId: () => id);
-              pageIndexNotifier.value = 0;
-            },
+            pageIndexNotifier: pageIndexNotifier,
+            onBack: () => pageIndexNotifier.value = 0,
+            onClose: () => Navigator.of(modalContext).pop(),
           ),
         ),
 
@@ -67,27 +88,11 @@ Future<void> showDoctorsFilterModal(BuildContext context, WidgetRef ref) {
         WoltModalSheetPage(
           backgroundColor: kMedpheSurface,
           surfaceTintColor: Colors.transparent,
-          hasTopBarLayer: true,
-          isTopBarLayerAlwaysVisible: true,
-          topBarTitle: const Text(
-            'Ciudad',
-            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
-          ),
-          leadingNavBarWidget: Padding(
-            padding: const EdgeInsets.only(left: 12),
-            child: _BackButton(onPressed: () => pageIndexNotifier.value = 0),
-          ),
-          trailingNavBarWidget: Padding(
-            padding: const EdgeInsets.only(right: 12),
-            child: _CloseButton(onPressed: () => Navigator.of(modalContext).pop()),
-          ),
+          hasTopBarLayer: false,
           child: _CitySelectionView(
-            onSelected: (id) {
-              final filter = ref.read(doctorsSearchFilterProvider);
-              ref.read(doctorsSearchFilterProvider.notifier).state =
-                  filter.copyWith(ciudadId: () => id);
-              pageIndexNotifier.value = 0;
-            },
+            pageIndexNotifier: pageIndexNotifier,
+            onBack: () => pageIndexNotifier.value = 0,
+            onClose: () => Navigator.of(modalContext).pop(),
           ),
         ),
       ];
@@ -110,7 +115,7 @@ class _CloseButton extends StatelessWidget {
         onTap: onPressed,
         child: const Padding(
           padding: EdgeInsets.all(8),
-          child: Icon(Icons.close, size: 20, color: Colors.black54),
+          child: Icon(Icons.close_rounded, size: 18, color: Colors.black54),
         ),
       ),
     );
@@ -132,7 +137,7 @@ class _BackButton extends StatelessWidget {
         onTap: onPressed,
         child: const Padding(
           padding: EdgeInsets.all(8),
-          child: Icon(Icons.arrow_back_rounded, size: 20, color: Colors.black54),
+          child: Icon(Icons.arrow_back_rounded, size: 18, color: Colors.black54),
         ),
       ),
     );
@@ -182,7 +187,7 @@ class _FilterActionBar extends ConsumerWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  textStyle: const TextStyle(fontWeight: FontWeight.w600),
+                  textStyle: GoogleFonts.poppins(fontWeight: FontWeight.w600),
                 ),
                 child: const Text('Limpiar'),
               ),
@@ -200,7 +205,7 @@ class _FilterActionBar extends ConsumerWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  textStyle: const TextStyle(fontWeight: FontWeight.w700),
+                  textStyle: GoogleFonts.poppins(fontWeight: FontWeight.w700),
                 ),
                 child: const Text('Aplicar filtros'),
               ),
@@ -226,12 +231,13 @@ class _DoctorsFilterForm extends ConsumerWidget {
     final especialidadSeleccionada = especialidadesAsync.asData?.value
         .where((e) => e.id == filter.especialidadId)
         .firstOrNull;
-    final nombreEspecialidad = especialidadSeleccionada?.nombre;
+    final nombreEspecialidad =
+        especialidadSeleccionada?.nombre ?? filter.especialidadId;
 
     final ciudadSeleccionada = ciudadesAsync.asData?.value
         .where((c) => c.id == filter.ciudadId)
         .firstOrNull;
-    final nombreCiudad = ciudadSeleccionada?.nombre;
+    final nombreCiudad = ciudadSeleccionada?.nombre ?? filter.ciudadId;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -325,7 +331,7 @@ class _SelectorTile extends StatelessWidget {
                   children: [
                     Text(
                       label,
-                      style: TextStyle(
+                      style: GoogleFonts.poppins(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                         color: Colors.grey.shade600,
@@ -336,7 +342,7 @@ class _SelectorTile extends StatelessWidget {
                       valueText,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
+                      style: GoogleFonts.poppins(
                         fontSize: 14,
                         fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                         color: isSelected ? kMedphePrimary : Colors.black87,
@@ -367,17 +373,32 @@ class _SelectorTile extends StatelessWidget {
 }
 
 class _SpecialtySelectionView extends ConsumerWidget {
-  const _SpecialtySelectionView({required this.onSelected});
+  const _SpecialtySelectionView({
+    required this.onBack,
+    required this.onClose,
+    required this.pageIndexNotifier,
+  });
 
-  final ValueChanged<String?> onSelected;
+  final VoidCallback onBack;
+  final VoidCallback onClose;
+  final ValueNotifier<int> pageIndexNotifier;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final especialidadesAsync = ref.watch(especialidadesProvider);
     final filter = ref.watch(doctorsSearchFilterProvider);
 
+    void onSelected(String? id) {
+      final current = ref.read(doctorsSearchFilterProvider);
+      ref.read(doctorsSearchFilterProvider.notifier).state =
+          current.copyWith(especialidadId: () => id);
+      pageIndexNotifier.value = 0;
+    }
+
     return especialidadesAsync.when(
       data: (especialidades) => _SearchableSelectionView(
+        screenTitle: 'Especialidad',
+        screenSubtitle: 'Selecciona una especialidad',
         titleAll: 'Todas las especialidades',
         searchHint: 'Buscar especialidad...',
         selectedId: filter.especialidadId,
@@ -386,24 +407,34 @@ class _SpecialtySelectionView extends ConsumerWidget {
         ],
         isLoading: false,
         errorMessage: null,
+        onBack: onBack,
+        onClose: onClose,
         onSelected: onSelected,
       ),
       loading: () => _SearchableSelectionView(
+        screenTitle: 'Especialidad',
+        screenSubtitle: 'Selecciona una especialidad',
         titleAll: 'Todas las especialidades',
         searchHint: 'Buscar especialidad...',
         selectedId: null,
         items: const [],
         isLoading: true,
         errorMessage: null,
+        onBack: onBack,
+        onClose: onClose,
         onSelected: onSelected,
       ),
       error: (error, _) => _SearchableSelectionView(
+        screenTitle: 'Especialidad',
+        screenSubtitle: 'Selecciona una especialidad',
         titleAll: 'Todas las especialidades',
         searchHint: 'Buscar especialidad...',
         selectedId: null,
         items: const [],
         isLoading: false,
         errorMessage: error.toString(),
+        onBack: onBack,
+        onClose: onClose,
         onSelected: onSelected,
       ),
     );
@@ -411,17 +442,32 @@ class _SpecialtySelectionView extends ConsumerWidget {
 }
 
 class _CitySelectionView extends ConsumerWidget {
-  const _CitySelectionView({required this.onSelected});
+  const _CitySelectionView({
+    required this.onBack,
+    required this.onClose,
+    required this.pageIndexNotifier,
+  });
 
-  final ValueChanged<String?> onSelected;
+  final VoidCallback onBack;
+  final VoidCallback onClose;
+  final ValueNotifier<int> pageIndexNotifier;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final ciudadesAsync = ref.watch(ciudadesProvider);
     final filter = ref.watch(doctorsSearchFilterProvider);
 
+    void onSelected(String? id) {
+      final current = ref.read(doctorsSearchFilterProvider);
+      ref.read(doctorsSearchFilterProvider.notifier).state =
+          current.copyWith(ciudadId: () => id);
+      pageIndexNotifier.value = 0;
+    }
+
     return ciudadesAsync.when(
       data: (ciudades) => _SearchableSelectionView(
+        screenTitle: 'Ciudad',
+        screenSubtitle: 'Selecciona tu ciudad',
         titleAll: 'Todas las ciudades',
         searchHint: 'Buscar ciudad...',
         selectedId: filter.ciudadId,
@@ -430,24 +476,34 @@ class _CitySelectionView extends ConsumerWidget {
         ],
         isLoading: false,
         errorMessage: null,
+        onBack: onBack,
+        onClose: onClose,
         onSelected: onSelected,
       ),
       loading: () => _SearchableSelectionView(
+        screenTitle: 'Ciudad',
+        screenSubtitle: 'Selecciona tu ciudad',
         titleAll: 'Todas las ciudades',
         searchHint: 'Buscar ciudad...',
         selectedId: null,
         items: const [],
         isLoading: true,
         errorMessage: null,
+        onBack: onBack,
+        onClose: onClose,
         onSelected: onSelected,
       ),
       error: (error, _) => _SearchableSelectionView(
+        screenTitle: 'Ciudad',
+        screenSubtitle: 'Selecciona tu ciudad',
         titleAll: 'Todas las ciudades',
         searchHint: 'Buscar ciudad...',
         selectedId: null,
-        items: [],
+        items: const [],
         isLoading: false,
         errorMessage: error.toString(),
+        onBack: onBack,
+        onClose: onClose,
         onSelected: onSelected,
       ),
     );
@@ -456,26 +512,46 @@ class _CitySelectionView extends ConsumerWidget {
 
 class _SearchableSelectionView extends StatefulWidget {
   const _SearchableSelectionView({
+    required this.screenTitle,
+    required this.screenSubtitle,
     required this.titleAll,
     required this.searchHint,
     required this.selectedId,
     required this.items,
     required this.isLoading,
     required this.errorMessage,
+    required this.onBack,
+    required this.onClose,
     required this.onSelected,
   });
 
+  final String screenTitle;
+  final String screenSubtitle;
   final String titleAll;
   final String searchHint;
   final String? selectedId;
   final List<({String id, String nombre})> items;
   final bool isLoading;
   final String? errorMessage;
+  final VoidCallback onBack;
+  final VoidCallback onClose;
   final ValueChanged<String?> onSelected;
 
   @override
   State<_SearchableSelectionView> createState() =>
       _SearchableSelectionViewState();
+}
+
+String _fold(String value) {
+  const accents = 'áàäâãéèëêíìïîóòöôõúùüûñ';
+  const plain = 'aaaaaeeeeiiiiooooouuuun';
+  final buffer = StringBuffer();
+  for (final rune in value.toLowerCase().runes) {
+    final char = String.fromCharCode(rune);
+    final index = accents.indexOf(char);
+    buffer.write(index == -1 ? char : plain[index]);
+  }
+  return buffer.toString();
 }
 
 class _SearchableSelectionViewState extends State<_SearchableSelectionView> {
@@ -487,7 +563,7 @@ class _SearchableSelectionViewState extends State<_SearchableSelectionView> {
     super.initState();
     _searchController.addListener(() {
       setState(() {
-        _query = _searchController.text.trim().toLowerCase();
+        _query = _searchController.text.trim();
       });
     });
   }
@@ -514,16 +590,63 @@ class _SearchableSelectionViewState extends State<_SearchableSelectionView> {
       );
     }
 
+    final queryFolded = _fold(_query).trim();
+    final tokens =
+        queryFolded.split(RegExp(r'\s+')).where((t) => t.isNotEmpty).toList();
     final filteredItems = widget.items.where((item) {
-      if (_query.isEmpty) return true;
-      return item.nombre.toLowerCase().contains(_query);
+      if (tokens.isEmpty) return true;
+      final itemFolded = _fold(item.nombre);
+      return tokens.every((token) => itemFolded.contains(token));
     }).toList();
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 8, 20, 40),
+      padding: const EdgeInsets.fromLTRB(20, 42, 20, 40),
       child: Column(
         mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Header moderno con navegación y título
+          Row(
+            children: [
+              _BackButton(
+                onPressed: () {
+                  FocusManager.instance.primaryFocus?.unfocus();
+                  widget.onBack();
+                },
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.screenTitle,
+                      style: GoogleFonts.poppins(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.black87,
+                        letterSpacing: -0.3,
+                      ),
+                    ),
+                    Text(
+                      widget.screenSubtitle,
+                      style: GoogleFonts.poppins(
+                        fontSize: 12.5,
+                        color: Colors.grey.shade600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              _CloseButton(
+                onPressed: () {
+                  FocusManager.instance.primaryFocus?.unfocus();
+                  widget.onClose();
+                },
+              ),
+            ],
+          ),
+          const SizedBox(height: 18),
           // Buscador en vivo
           Container(
             decoration: BoxDecoration(
@@ -533,9 +656,10 @@ class _SearchableSelectionViewState extends State<_SearchableSelectionView> {
             ),
             child: TextField(
               controller: _searchController,
+              style: GoogleFonts.poppins(fontSize: 14, color: Colors.black87),
               decoration: InputDecoration(
                 hintText: widget.searchHint,
-                hintStyle: TextStyle(
+                hintStyle: GoogleFonts.poppins(
                   color: Colors.grey.shade400,
                   fontSize: 14,
                 ),
@@ -558,7 +682,10 @@ class _SearchableSelectionViewState extends State<_SearchableSelectionView> {
             _SelectionOptionTile(
               title: widget.titleAll,
               isSelected: widget.selectedId == null,
-              onTap: () => widget.onSelected(null),
+              onTap: () {
+                FocusManager.instance.primaryFocus?.unfocus();
+                widget.onSelected(null);
+              },
             ),
             const SizedBox(height: 6),
           ],
@@ -572,7 +699,7 @@ class _SearchableSelectionViewState extends State<_SearchableSelectionView> {
                   const SizedBox(height: 8),
                   Text(
                     'No se encontraron coincidencias',
-                    style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
+                    style: GoogleFonts.poppins(color: Colors.grey.shade600, fontSize: 13),
                   ),
                 ],
               ),
@@ -588,7 +715,10 @@ class _SearchableSelectionViewState extends State<_SearchableSelectionView> {
                 return _SelectionOptionTile(
                   title: item.nombre,
                   isSelected: widget.selectedId == item.id,
-                  onTap: () => widget.onSelected(item.id),
+                  onTap: () {
+                    FocusManager.instance.primaryFocus?.unfocus();
+                    widget.onSelected(item.id);
+                  },
                 );
               },
             ),
@@ -633,7 +763,7 @@ class _SelectionOptionTile extends StatelessWidget {
               Expanded(
                 child: Text(
                   title,
-                  style: TextStyle(
+                  style: GoogleFonts.poppins(
                     fontSize: 14,
                     fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                     color: isSelected ? kMedphePrimary : Colors.black87,

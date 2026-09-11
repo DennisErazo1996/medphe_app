@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../domain/entities/doctor.dart';
@@ -150,7 +151,16 @@ class _DoctorProfileContent extends ConsumerWidget {
                             spacing: 8,
                             runSpacing: 8,
                             children: doctor.especialidades
-                                .map((e) => Chip(label: Text(e.nombre)))
+                                .map((e) => Chip(
+                                      label: Text(
+                                        e.nombre,
+                                        style: GoogleFonts.poppins(
+                                          color: kMedphePrimary,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 12.5,
+                                        ),
+                                      ),
+                                    ))
                                 .toList(),
                           ),
                         ),
@@ -212,7 +222,7 @@ class _DoctorProfileContent extends ConsumerWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(28),
                     ),
-                    textStyle: const TextStyle(
+                    textStyle: GoogleFonts.poppins(
                       fontWeight: FontWeight.w700,
                       fontSize: 15,
                     ),
@@ -267,7 +277,7 @@ class _IdentityCard extends StatelessWidget {
                   textAlign: TextAlign.center,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: GoogleFonts.poppins(
                     fontWeight: FontWeight.w800,
                     fontSize: 20,
                     height: 1.2,
@@ -282,7 +292,7 @@ class _IdentityCard extends StatelessWidget {
           Text(
             especialidad,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: GoogleFonts.poppins(
               color: kMedpheSecondary,
               fontSize: 14,
               fontWeight: FontWeight.w600,
@@ -306,7 +316,7 @@ class _IdentityCard extends StatelessWidget {
                 const SizedBox(width: 4),
                 Text(
                   '${doctor.ciudad.nombre}, ${doctor.ciudad.departamento}',
-                  style: TextStyle(
+                  style: GoogleFonts.poppins(
                     color: Colors.grey.shade800,
                     fontSize: 12.5,
                     fontWeight: FontWeight.w600,
@@ -372,14 +382,14 @@ class _StatsStrip extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     stats[i].$1,
-                    style: const TextStyle(
+                    style: GoogleFonts.poppins(
                       fontWeight: FontWeight.w800,
                       fontSize: 16,
                     ),
                   ),
                   Text(
                     stats[i].$2,
-                    style: TextStyle(
+                    style: GoogleFonts.poppins(
                       color: Colors.grey.shade600,
                       fontSize: 11,
                       fontWeight: FontWeight.w500,
@@ -485,7 +495,7 @@ class _ContactAction extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             label,
-            style: TextStyle(
+            style: GoogleFonts.poppins(
               fontSize: 11.5,
               fontWeight: FontWeight.w600,
               color: Colors.grey.shade700,
@@ -555,7 +565,7 @@ class _InfoCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     titulo,
-                    style: const TextStyle(
+                    style: GoogleFonts.poppins(
                       fontWeight: FontWeight.w700,
                       fontSize: 15.5,
                     ),
@@ -582,7 +592,7 @@ class _InfoCard extends StatelessWidget {
                     Expanded(
                       child: Text(
                         item,
-                        style: TextStyle(
+                        style: GoogleFonts.poppins(
                           color: Colors.grey.shade800,
                           fontSize: 13.5,
                           height: 1.45,

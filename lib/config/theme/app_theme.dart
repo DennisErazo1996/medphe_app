@@ -20,13 +20,18 @@ ThemeData buildMedpheTheme() {
     brightness: Brightness.light,
   ).copyWith(secondary: kMedpheSecondary);
 
-  final textTheme = GoogleFonts.poppinsTextTheme();
-
-  return ThemeData(
+  final baseTheme = ThemeData(
     colorScheme: colorScheme,
     useMaterial3: true,
-    fontFamily: GoogleFonts.poppins().fontFamily,
+    brightness: Brightness.light,
+  );
+
+  final textTheme = GoogleFonts.poppinsTextTheme(baseTheme.textTheme);
+  final primaryTextTheme = GoogleFonts.poppinsTextTheme(baseTheme.primaryTextTheme);
+
+  return baseTheme.copyWith(
     textTheme: textTheme,
+    primaryTextTheme: primaryTextTheme,
     scaffoldBackgroundColor: kMedpheSurface,
     appBarTheme: const AppBarTheme(
       backgroundColor: Colors.transparent,
@@ -46,9 +51,10 @@ ThemeData buildMedpheTheme() {
     ),
     chipTheme: ChipThemeData(
       backgroundColor: kMedphePrimary.withValues(alpha: 0.08),
-      labelStyle: const TextStyle(
+      labelStyle: GoogleFonts.poppins(
         color: kMedphePrimary,
         fontWeight: FontWeight.w600,
+        fontSize: 13,
       ),
       side: BorderSide.none,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
@@ -60,10 +66,22 @@ ThemeData buildMedpheTheme() {
         elevation: 0,
         padding: const EdgeInsets.symmetric(vertical: 16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-        textStyle: const TextStyle(fontWeight: FontWeight.w600),
+        textStyle: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+      ),
+    ),
+    filledButtonTheme: FilledButtonThemeData(
+      style: FilledButton.styleFrom(
+        textStyle: GoogleFonts.poppins(fontWeight: FontWeight.w700),
+      ),
+    ),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: OutlinedButton.styleFrom(
+        textStyle: GoogleFonts.poppins(fontWeight: FontWeight.w600),
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(
+      hintStyle: GoogleFonts.poppins(color: Colors.grey.shade400, fontSize: 14),
+      labelStyle: GoogleFonts.poppins(fontSize: 14),
       filled: true,
       fillColor: Colors.white,
       border: OutlineInputBorder(
