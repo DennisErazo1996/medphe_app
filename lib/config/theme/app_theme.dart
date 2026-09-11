@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-const kMedphePrimary = Color(0xFF1D2EEC);
-const kMedpheSecondary = Color(0xFF6C1DEC);
-const kMedpheSurface = Color(0xFFF1EEFB);
+import 'app_colors.dart';
 
-/// Paleta rotativa para íconos de categoría/especialidad — evita que todo
-/// se vea monocromático azul.
-const kCategoryPalette = [
-  kMedphePrimary,
-  kMedpheSecondary,
-  Color(0xFF12A594),
-  Color(0xFFF2994A),
-];
+export 'app_colors.dart';
+
+/// Aliases para mantener compatibilidad en todo el proyecto
+const kMedphePrimary = AppColors.primary;
+const kMedpheSecondary = AppColors.secondary;
+const kMedpheSurface = AppColors.surface;
+
+/// Paleta rotativa para íconos de categoría/especialidad
+const kCategoryPalette = AppColors.categoryPalette;
 
 ThemeData buildMedpheTheme() {
   final colorScheme = ColorScheme.fromSeed(

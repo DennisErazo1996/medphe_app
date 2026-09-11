@@ -81,6 +81,8 @@ class _CentroMedicoContent extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final doctoresAsync = ref.watch(doctorsByCentroMedicoProvider(centro));
+    final isFavorito =
+        ref.watch(favoriteCentroMedicoIdsProvider).contains(centro.id);
 
     return CustomScrollView(
       slivers: [
@@ -101,6 +103,18 @@ class _CentroMedicoContent extends ConsumerWidget {
               ),
             ),
           ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 16),
+              child: Center(
+                child: CircleIconButton(
+                  icon: isFavorito ? Icons.favorite : Icons.favorite_border,
+                  iconColor: isFavorito ? AppColors.favorite : Colors.black87,
+                  onPressed: () => toggleFavoriteCentroMedico(ref, centro.id),
+                ),
+              ),
+            ),
+          ],
           flexibleSpace: FlexibleSpaceBar(
             stretchModes: const [
               StretchMode.zoomBackground,

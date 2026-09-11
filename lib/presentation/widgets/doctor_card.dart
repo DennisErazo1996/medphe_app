@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../config/theme/app_theme.dart';
 import '../../domain/entities/doctor.dart';
 import '../providers/favorites_provider.dart';
 
@@ -205,4 +206,4 @@ class _FavoriteButton extends StatelessWidget {
   }
 }
 
-const kMedpheHeartColor = Color(0xFFE53E7A);
+const kMedpheHeartColor = AppColors.favorite;

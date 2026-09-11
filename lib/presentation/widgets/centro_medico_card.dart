@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../config/theme/app_theme.dart';
 import '../../domain/entities/centro_medico.dart';
+import '../providers/favorites_provider.dart';
 
-class CentroMedicoCard extends StatelessWidget {
+class CentroMedicoCard extends ConsumerWidget {
   const CentroMedicoCard({
     super.key,
     required this.centro,
@@ -17,7 +20,9 @@ class CentroMedicoCard extends StatelessWidget {
   final VoidCallback? onTap;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isFavorito =
+        ref.watch(favoriteCentroMedicoIdsProvider).contains(centro.id);
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -183,19 +188,10 @@ class CentroMedicoCard extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(width: 6),
-              Container(
-                width: 32,
-                height: 32,
-                decoration: BoxDecoration(
-                  color: accent.withValues(alpha: 0.10),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.chevron_right_rounded,
-                  color: accent,
-                  size: 20,
-                ),
+              const SizedBox(width: 8),
+              _FavoriteButton(
+                isFavorito: isFavorito,
+                onTap: () => toggleFavoriteCentroMedico(ref, centro.id),
               ),
             ],
           ),
@@ -305,6 +301,43 @@ class _FallbackLogo extends StatelessWidget {
                 ),
               )
             : Icon(Icons.local_hospital_rounded, color: accent, size: 32),
+      ),
+    );
+  }
+}
+
+class _FavoriteButton extends StatelessWidget {
+  const _FavoriteButton({required this.isFavorito, required this.onTap});
+
+  final bool isFavorito;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(14),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeOut,
+        padding: const EdgeInsets.all(9),
+        decoration: BoxDecoration(
+          color: isFavorito
+              ? AppColors.favorite.withValues(alpha: 0.12)
+              : Colors.grey.shade100,
+          borderRadius: BorderRadius.circular(14),
+        ),
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 200),
+          transitionBuilder: (child, animation) =>
+              ScaleTransition(scale: animation, child: child),
+          child: Icon(
+            isFavorito ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+            key: ValueKey(isFavorito),
+            size: 20,
+            color: isFavorito ? AppColors.favorite : Colors.grey.shade400,
+          ),
+        ),
       ),
     );
   }
