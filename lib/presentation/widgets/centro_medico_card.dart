@@ -39,7 +39,7 @@ class CentroMedicoCard extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              _CentroLogo(centro: centro, accent: accent),
+              _CentroFoto(centro: centro, accent: accent),
               const SizedBox(width: 14),
               Expanded(
                 child: Column(
@@ -140,7 +140,8 @@ class CentroMedicoCard extends StatelessWidget {
                               ],
                             ),
                           ),
-                        if (centro.horario != null && centro.horario!.isNotEmpty)
+                        if (centro.horario != null &&
+                            centro.horario!.isNotEmpty)
                           Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 8,
@@ -204,21 +205,22 @@ class CentroMedicoCard extends StatelessWidget {
   }
 }
 
-class _CentroLogo extends StatelessWidget {
-  const _CentroLogo({required this.centro, required this.accent});
+class _CentroFoto extends StatelessWidget {
+  const _CentroFoto({required this.centro, required this.accent});
 
   final CentroMedico centro;
   final Color accent;
 
   @override
   Widget build(BuildContext context) {
+    final fotoUrl = centro.fotoPortadaUrl;
+    final logoUrl = centro.logoUrl;
+
     return Container(
       width: 72,
       height: 72,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(18),
-        color: Colors.white,
-        border: Border.all(color: Colors.grey.shade200),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.04),
@@ -227,16 +229,58 @@ class _CentroLogo extends StatelessWidget {
           ),
         ],
       ),
-      clipBehavior: Clip.antiAlias,
-      child: centro.logoUrl != null && centro.logoUrl!.isNotEmpty
-          ? Image.network(
-              centro.logoUrl!,
-              fit: BoxFit.contain,
-              errorBuilder: (context, error, stackTrace) =>
-                  _FallbackLogo(accent: accent, acronimo: centro.acronimo),
-            )
-          : _FallbackLogo(accent: accent, acronimo: centro.acronimo),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(18),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: Colors.grey.shade200),
+            borderRadius: BorderRadius.circular(18),
+          ),
+          child: fotoUrl != null && fotoUrl.isNotEmpty
+              ? Image.network(
+                  fotoUrl,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) =>
+                      _CentroLogoFallback(
+                        logoUrl: logoUrl,
+                        accent: accent,
+                        acronimo: centro.acronimo,
+                      ),
+                )
+              : _CentroLogoFallback(
+                  logoUrl: logoUrl,
+                  accent: accent,
+                  acronimo: centro.acronimo,
+                ),
+        ),
+      ),
     );
+  }
+}
+
+class _CentroLogoFallback extends StatelessWidget {
+  const _CentroLogoFallback({
+    required this.logoUrl,
+    required this.accent,
+    required this.acronimo,
+  });
+
+  final String? logoUrl;
+  final Color accent;
+  final String acronimo;
+
+  @override
+  Widget build(BuildContext context) {
+    if (logoUrl != null && logoUrl!.isNotEmpty) {
+      return Image.network(
+        logoUrl!,
+        fit: BoxFit.contain,
+        errorBuilder: (context, error, stackTrace) =>
+            _FallbackLogo(accent: accent, acronimo: acronimo),
+      );
+    }
+    return _FallbackLogo(accent: accent, acronimo: acronimo);
   }
 }
 

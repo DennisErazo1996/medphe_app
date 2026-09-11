@@ -159,370 +159,269 @@ class _CentroMedicoContent extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Logo flotante
-                Transform.translate(
-                  offset: const Offset(0, -38),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Container(
-                        width: 88,
-                        height: 88,
-                        padding: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(24),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.12),
-                              blurRadius: 20,
-                              offset: const Offset(0, 8),
-                            ),
-                          ],
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(20),
-                          child: centro.logoUrl != null &&
-                                  centro.logoUrl!.isNotEmpty
-                              ? Image.network(
-                                  centro.logoUrl!,
-                                  fit: BoxFit.contain,
-                                  errorBuilder: (context, error, stackTrace) =>
-                                      _AvatarFallback(
-                                        acronimo: centro.acronimo,
-                                      ),
-                                )
-                              : _AvatarFallback(acronimo: centro.acronimo),
-                        ),
-                      ),
-                      const Spacer(),
-                      if (centro.acronimo.isNotEmpty)
-                        Container(
-                          margin: const EdgeInsets.only(bottom: 8),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: kMedphePrimary.withValues(alpha: 0.12),
-                            borderRadius: BorderRadius.circular(100),
-                          ),
-                          child: Text(
-                            centro.acronimo,
-                            style: GoogleFonts.poppins(
-                              color: kMedphePrimary,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 13,
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
+                const SizedBox(height: 16),
 
                 // Título y Ciudad
-                Transform.translate(
-                  offset: const Offset(0, -22),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        centro.nombre,
-                        style: GoogleFonts.poppins(
-                          fontWeight: FontWeight.w800,
-                          fontSize: 22,
-                          height: 1.25,
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.location_on_rounded,
-                            size: 16,
-                            color: Colors.grey.shade600,
-                          ),
-                          const SizedBox(width: 4),
-                          Expanded(
-                            child: Text(
-                              '${centro.ciudad.nombre}, ${centro.departamento}',
-                              style: GoogleFonts.poppins(
-                                color: Colors.grey.shade600,
-                                fontSize: 13.5,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                          if (centro.esActivo)
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.green.shade50,
-                                borderRadius: BorderRadius.circular(100),
-                                border: Border.all(
-                                  color: Colors.green.shade200,
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Container(
-                                    width: 6,
-                                    height: 6,
-                                    decoration: const BoxDecoration(
-                                      color: Colors.green,
-                                      shape: BoxShape.circle,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 5),
-                                  Text(
-                                    'Activo',
-                                    style: TextStyle(
-                                      color: Colors.green.shade700,
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: 11,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 18),
-
-                      // Métricas rápidas
-                      _MetricsBar(centro: centro),
-
-                      const SizedBox(height: 20),
-
-                      // Botones de contacto
-                      _ContactRow(
-                        centro: centro,
-                        onCall: centro.tieneTelefonos ? _abrirTelefono : null,
-                        onWhatsapp:
-                            centro.tieneWhatsapp ? _abrirWhatsapp : null,
-                        onMaps: _abrirMaps,
-                        onWebsite: centro.tieneWebsite
-                            ? () => _abrirUrl(centro.websiteUrl!)
-                            : null,
-                      ),
-
-                      const SizedBox(height: 24),
-
-                      // Horario
-                      if (centro.horario != null &&
-                          centro.horario!.trim().isNotEmpty) ...[
-                        _DetailSectionCard(
-                          icon: Icons.access_time_rounded,
-                          accent: kCategoryPalette[0],
-                          title: 'Horario de atención',
-                          content: Text(
-                            centro.horario!,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            centro.nombre,
                             style: GoogleFonts.poppins(
-                              fontSize: 14,
-                              color: Colors.grey.shade800,
+                              fontWeight: FontWeight.w800,
+                              fontSize: 22,
+                              height: 1.25,
+                            ),
+                          ),
+                        ),
+                        if (centro.esActivo) ...[
+                          const SizedBox(width: 6),
+                          const Padding(
+                            padding: EdgeInsets.only(top: 2),
+                            child: Icon(
+                              Icons.verified,
+                              color: kMedphePrimary,
+                              size: 20,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.location_on_rounded,
+                          size: 16,
+                          color: Colors.grey.shade600,
+                        ),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            '${centro.ciudad.nombre}, ${centro.departamento}',
+                            style: GoogleFonts.poppins(
+                              color: Colors.grey.shade600,
+                              fontSize: 13.5,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
                         ),
-                        const SizedBox(height: 14),
                       ],
+                    ),
 
-                      // Ubicación y Dirección
+                    const SizedBox(height: 18),
+
+                    // Métricas rápidas
+                    _MetricsBar(centro: centro),
+
+                    const SizedBox(height: 20),
+
+                    // Botones de contacto
+                    _ContactRow(
+                      centro: centro,
+                      onCall: centro.tieneTelefonos ? _abrirTelefono : null,
+                      onWhatsapp: centro.tieneWhatsapp ? _abrirWhatsapp : null,
+                      onMaps: _abrirMaps,
+                      onWebsite: centro.tieneWebsite
+                          ? () => _abrirUrl(centro.websiteUrl!)
+                          : null,
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    // Horario
+                    if (centro.horario != null &&
+                        centro.horario!.trim().isNotEmpty) ...[
                       _DetailSectionCard(
-                        icon: Icons.map_rounded,
-                        accent: kCategoryPalette[1],
-                        title: 'Dirección y ubicación',
-                        content: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              centro.direccion.isNotEmpty
-                                  ? centro.direccion
-                                  : '${centro.ciudad.nombre}, ${centro.departamento}',
-                              style: GoogleFonts.poppins(
-                                fontSize: 13.5,
-                                color: Colors.grey.shade800,
-                                height: 1.4,
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                            OutlinedButton.icon(
-                              onPressed: _abrirMaps,
-                              style: OutlinedButton.styleFrom(
-                                foregroundColor: kMedphePrimary,
-                                side: const BorderSide(color: kMedphePrimary),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(14),
-                                ),
-                              ),
-                              icon: const Icon(Icons.directions_outlined,
-                                  size: 18),
-                              label: const Text(
-                                'Cómo llegar en Google Maps',
-                                style: TextStyle(fontWeight: FontWeight.w600),
-                              ),
-                            ),
-                          ],
+                        icon: Icons.access_time_rounded,
+                        accent: kCategoryPalette[0],
+                        title: 'Horario de atención',
+                        content: Text(
+                          centro.horario!,
+                          style: GoogleFonts.poppins(
+                            fontSize: 14,
+                            color: Colors.grey.shade800,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 14),
+                    ],
 
-                      // Teléfonos y canales de atención
-                      if (centro.tieneTelefonos || centro.tieneEmail) ...[
-                        _DetailSectionCard(
-                          icon: Icons.contact_phone_outlined,
-                          accent: kCategoryPalette[2],
-                          title: 'Canales de atención',
-                          content: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              if (centro.tieneTelefonos)
-                                Padding(
-                                  padding: const EdgeInsets.only(bottom: 8),
-                                  child: Row(
-                                    children: [
-                                      const Icon(Icons.phone_rounded,
-                                          size: 18, color: Colors.black54),
-                                      const SizedBox(width: 10),
-                                      Expanded(
-                                        child: Text(
-                                          centro.telefonos!,
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 13.5,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              if (centro.tieneEmail)
-                                Row(
+                    // Ubicación y Dirección
+                    _DetailSectionCard(
+                      icon: Icons.map_rounded,
+                      accent: kCategoryPalette[1],
+                      title: 'Dirección y ubicación',
+                      content: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            centro.direccion.isNotEmpty
+                                ? centro.direccion
+                                : '${centro.ciudad.nombre}, ${centro.departamento}',
+                            style: GoogleFonts.poppins(
+                              fontSize: 13.5,
+                              color: Colors.grey.shade800,
+                              height: 1.4,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          OutlinedButton.icon(
+                            onPressed: _abrirMaps,
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: kMedphePrimary,
+                              side: const BorderSide(color: kMedphePrimary),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                            ),
+                            icon: const Icon(
+                              Icons.directions_outlined,
+                              size: 18,
+                            ),
+                            label: const Text(
+                              'Cómo llegar en Google Maps',
+                              style: TextStyle(fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+
+                    // Teléfonos y canales de atención
+                    if (centro.tieneTelefonos || centro.tieneEmail) ...[
+                      _DetailSectionCard(
+                        icon: Icons.contact_phone_outlined,
+                        accent: kCategoryPalette[2],
+                        title: 'Canales de atención',
+                        content: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (centro.tieneTelefonos)
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 8),
+                                child: Row(
                                   children: [
-                                    const Icon(Icons.email_outlined,
-                                        size: 18, color: Colors.black54),
+                                    const Icon(
+                                      Icons.phone_rounded,
+                                      size: 18,
+                                      color: Colors.black54,
+                                    ),
                                     const SizedBox(width: 10),
                                     Expanded(
                                       child: Text(
-                                        centro.email!,
+                                        centro.telefonos!,
                                         style: GoogleFonts.poppins(
                                           fontSize: 13.5,
-                                          fontWeight: FontWeight.w500,
+                                          fontWeight: FontWeight.w600,
                                         ),
                                       ),
                                     ),
                                   ],
                                 ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 14),
-                      ],
-
-                      // Servicios médicos
-                      if (centro.serviciosMedicos.isNotEmpty) ...[
-                        _ChipsSectionCard(
-                          icon: Icons.medical_services_outlined,
-                          accent: kCategoryPalette[3 % kCategoryPalette.length],
-                          title: 'Servicios Médicos',
-                          items: centro.serviciosMedicos,
-                        ),
-                        const SizedBox(height: 14),
-                      ],
-
-                      // Especialidades médicas
-                      if (centro.especialidadesMedicas.isNotEmpty) ...[
-                        _ChipsSectionCard(
-                          icon: Icons.school_outlined,
-                          accent: kCategoryPalette[4 % kCategoryPalette.length],
-                          title: 'Especialidades Disponibles',
-                          items: centro.especialidadesMedicas,
-                        ),
-                        const SizedBox(height: 14),
-                      ],
-
-                      // Médicos disponibles en este centro
-                      doctoresAsync.when(
-                        data: (doctores) {
-                          if (doctores.isEmpty) return const SizedBox.shrink();
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const SizedBox(height: 10),
-                              Text(
-                                'Especialistas en este centro (${doctores.length})',
-                                style: GoogleFonts.poppins(
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 16,
-                                ),
                               ),
-                              const SizedBox(height: 12),
-                              ListView.separated(
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                padding: EdgeInsets.zero,
-                                itemCount: doctores.length,
-                                separatorBuilder: (context, index) =>
-                                    const SizedBox(height: 10),
-                                itemBuilder: (context, index) => DoctorCard(
-                                  doctor: doctores[index],
-                                  accent: kCategoryPalette[
-                                      index % kCategoryPalette.length],
-                                ),
+                            if (centro.tieneEmail)
+                              Row(
+                                children: [
+                                  const Icon(
+                                    Icons.email_outlined,
+                                    size: 18,
+                                    color: Colors.black54,
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Text(
+                                      centro.email!,
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 13.5,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
-                          );
-                        },
-                        loading: () => const Center(
-                          child: Padding(
-                            padding: EdgeInsets.all(20),
-                            child: CircularProgressIndicator(),
-                          ),
+                          ],
                         ),
-                        error: (error, stack) => const SizedBox.shrink(),
                       ),
+                      const SizedBox(height: 14),
                     ],
-                  ),
+
+                    // Servicios médicos
+                    if (centro.serviciosMedicos.isNotEmpty) ...[
+                      _ChipsSectionCard(
+                        icon: Icons.medical_services_outlined,
+                        accent: kCategoryPalette[3 % kCategoryPalette.length],
+                        title: 'Servicios Médicos',
+                        items: centro.serviciosMedicos,
+                      ),
+                      const SizedBox(height: 14),
+                    ],
+
+                    // Especialidades médicas
+                    if (centro.especialidadesMedicas.isNotEmpty) ...[
+                      _ChipsSectionCard(
+                        icon: Icons.school_outlined,
+                        accent: kCategoryPalette[4 % kCategoryPalette.length],
+                        title: 'Especialidades Disponibles',
+                        items: centro.especialidadesMedicas,
+                      ),
+                      const SizedBox(height: 14),
+                    ],
+
+                    // Médicos disponibles en este centro
+                    doctoresAsync.when(
+                      data: (doctores) {
+                        if (doctores.isEmpty) return const SizedBox.shrink();
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 10),
+                            Text(
+                              'Especialistas en este centro (${doctores.length})',
+                              style: GoogleFonts.poppins(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 16,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            ListView.separated(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              padding: EdgeInsets.zero,
+                              itemCount: doctores.length,
+                              separatorBuilder: (context, index) =>
+                                  const SizedBox(height: 10),
+                              itemBuilder: (context, index) => DoctorCard(
+                                doctor: doctores[index],
+                                accent:
+                                    kCategoryPalette[index %
+                                        kCategoryPalette.length],
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                      loading: () => const Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(20),
+                          child: CircularProgressIndicator(),
+                        ),
+                      ),
+                      error: (error, stack) => const SizedBox.shrink(),
+                    ),
+                  ],
                 ),
               ],
             ),
           ),
         ),
       ],
-    );
-  }
-}
-
-class _AvatarFallback extends StatelessWidget {
-  const _AvatarFallback({required this.acronimo});
-
-  final String acronimo;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: kMedphePrimary.withValues(alpha: 0.12),
-      child: Center(
-        child: acronimo.isNotEmpty
-            ? Text(
-                acronimo.length > 3 ? acronimo.substring(0, 3) : acronimo,
-                style: GoogleFonts.poppins(
-                  color: kMedphePrimary,
-                  fontWeight: FontWeight.w800,
-                  fontSize: 22,
-                ),
-              )
-            : const Icon(
-                Icons.local_hospital_rounded,
-                color: kMedphePrimary,
-                size: 38,
-              ),
-      ),
     );
   }
 }
@@ -558,11 +457,7 @@ class _MetricsBar extends StatelessWidget {
               label: 'Servicios',
             ),
           ),
-          Container(
-            width: 1,
-            height: 32,
-            color: Colors.grey.shade200,
-          ),
+          Container(width: 1, height: 32, color: Colors.grey.shade200),
           Expanded(
             child: _MetricItem(
               icon: Icons.school_outlined,
@@ -571,11 +466,7 @@ class _MetricsBar extends StatelessWidget {
               label: 'Especialidades',
             ),
           ),
-          Container(
-            width: 1,
-            height: 32,
-            color: Colors.grey.shade200,
-          ),
+          Container(width: 1, height: 32, color: Colors.grey.shade200),
           Expanded(
             child: _MetricItem(
               icon: Icons.location_city_outlined,
@@ -613,10 +504,7 @@ class _MetricItem extends StatelessWidget {
           value,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: GoogleFonts.poppins(
-            fontWeight: FontWeight.w700,
-            fontSize: 14,
-          ),
+          style: GoogleFonts.poppins(fontWeight: FontWeight.w700, fontSize: 14),
         ),
         Text(
           label,
@@ -825,9 +713,7 @@ class _ChipsSectionCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: accent.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: accent.withValues(alpha: 0.16),
-                  ),
+                  border: Border.all(color: accent.withValues(alpha: 0.16)),
                 ),
                 child: Text(
                   item,
