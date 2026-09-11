@@ -183,13 +183,13 @@ class _HomeHeader extends StatelessWidget {
     final saludo = horaActual < 12
         ? '¡Buenos días!'
         : horaActual < 18
-            ? '¡Buenas tardes!'
-            : '¡Buenas noches!';
+        ? '¡Buenas tardes!'
+        : '¡Buenas noches!';
     final saludoIcon = horaActual < 12
         ? Icons.sunny
         : horaActual < 18
-            ? Icons.wb_sunny_outlined
-            : Icons.nightlight_round;
+        ? Icons.wb_sunny_outlined
+        : Icons.nightlight_round;
 
     return Container(
       decoration: const BoxDecoration(
@@ -206,18 +206,13 @@ class _HomeHeader extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-
-                  const Text(
-                    'Medphe',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w800,
-                      fontSize: 20,
-                    ),
+                  Image.asset(
+                    'assets/images/logo_horizontal.png',
+                    height: 30,
+                    fit: BoxFit.contain,
                   ),
                   _HeaderIconButton(
                     icon: Icons.tune,
@@ -230,12 +225,26 @@ class _HomeHeader extends StatelessWidget {
 
               Row(
                 children: [
-                  Icon(saludoIcon, color: const Color.fromARGB(255, 253, 196, 255).withValues(alpha: 0.9), size: 20),
+                  Icon(
+                    saludoIcon,
+                    color: const Color.fromARGB(
+                      255,
+                      253,
+                      196,
+                      255,
+                    ).withValues(alpha: 0.9),
+                    size: 20,
+                  ),
                   const SizedBox(width: 6),
                   Text(
                     saludo,
                     style: TextStyle(
-                      color: const Color.fromARGB(255, 253, 196, 255).withValues(alpha: 0.9),
+                      color: const Color.fromARGB(
+                        255,
+                        253,
+                        196,
+                        255,
+                      ).withValues(alpha: 0.9),
                       fontWeight: FontWeight.w700,
                       fontSize: 14,
                     ),
@@ -263,9 +272,8 @@ class _HomeHeader extends StatelessWidget {
               ),
 
               const SizedBox(height: 18),
-              
-              _SearchPill(ref: ref),
 
+              _SearchPill(ref: ref),
             ],
           ),
         ),
@@ -358,19 +366,35 @@ class _SpecialtyCarousel extends StatelessWidget {
     Icons.medical_services_outlined,
   ];
 
+  static const _maxVisible = 6;
+
   @override
   Widget build(BuildContext context) {
     if (especialidades.isEmpty) return const SizedBox.shrink();
 
+    final mostrarVerMas = especialidades.length > _maxVisible;
+    final visibles = mostrarVerMas
+        ? especialidades.take(_maxVisible).toList()
+        : especialidades;
+
     return SizedBox(
-      height: 104,
+      height: 60,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 20),
-        itemCount: especialidades.length,
+        itemCount: visibles.length + (mostrarVerMas ? 1 : 0),
         separatorBuilder: (context, index) => const SizedBox(width: 12),
         itemBuilder: (context, index) {
-          final especialidad = especialidades[index];
+          if (index == visibles.length) {
+            return _SpecialtyTile(
+              nombre: 'Ver más',
+              icon: Icons.arrow_forward_rounded,
+              color: kMedphePrimary,
+              onTap: () => openDoctorsSearch(context, ref),
+            );
+          }
+
+          final especialidad = visibles[index];
           final icon = _icons[index % _icons.length];
           final color = kCategoryPalette[index % kCategoryPalette.length];
           return _SpecialtyTile(
@@ -404,40 +428,43 @@ class _SpecialtyTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(18),
       child: Container(
-        width: 86,
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+        constraints: const BoxConstraints(maxWidth: 168),
+        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(18),
           border: Border.all(color: Colors.black.withValues(alpha: 0.06)),
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-
             Container(
-              width: 44,
-              height: 44,
+              width: 30,
+              height: 30,
               decoration: BoxDecoration(
                 color: color.withValues(alpha: 0.12),
                 shape: BoxShape.circle,
               ),
-              child: Icon(icon, color: color, size: 22),
+              child: Icon(icon, color: color, size: 16),
             ),
 
-            const SizedBox(height: 8),
-            
-            Text(
-              nombre,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+            const SizedBox(width: 8),
+
+            Flexible(
+              child: Text(
+                nombre,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  height: 1.1,
+                ),
+              ),
             ),
           ],
         ),

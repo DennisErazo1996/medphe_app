@@ -1,13 +1,15 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../data/datasources/api_client.dart';
 import '../../data/repositories/doctors_repository.dart';
-import '../../data/repositories/dummy_doctors_repository.dart';
 import '../../domain/entities/ciudad.dart';
 import '../../domain/entities/doctor.dart';
 import '../../domain/entities/especialidad.dart';
+import '../../infrastructure/datasources/especialistas_api_datasource.dart';
+import '../../infrastructure/repositories/api_doctors_repository.dart';
 
 final doctorsRepositoryProvider = Provider<DoctorsRepository>((ref) {
-  return DummyDoctorsRepository();
+  return ApiDoctorsRepository(EspecialistasApiDatasource(buildApiClient()));
 });
 
 final especialidadesProvider = FutureProvider<List<Especialidad>>((ref) {
