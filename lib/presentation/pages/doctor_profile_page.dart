@@ -48,13 +48,20 @@ class _DoctorProfileContent extends ConsumerWidget {
 
   Future<void> _abrirUrl(String url) async {
     final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
+    try {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } catch (_) {
+      // Fallback: intentar sin verificar
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalNonBrowserApplication);
+      }
     }
   }
 
   Future<void> _abrirWhatsapp() {
-    return _abrirUrl('https://wa.me/${doctor.whatsappNumero}');
+    // Formato internacional sin '+' ni espacios: wa.me/+50312345678 o wa.me/50312345678
+    final numero = doctor.whatsappNumero.replaceAll(RegExp(r'[^\d+]'), '');
+    return _abrirUrl('https://wa.me/$numero');
   }
 
   @override
@@ -150,24 +157,88 @@ class _DoctorProfileContent extends ConsumerWidget {
                         onUrl: _abrirUrl,
                       ),
                       if (doctor.especialidades.length > 1) ...[
-                        const SizedBox(height: 20),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Wrap(
-                            spacing: 8,
-                            runSpacing: 8,
-                            children: doctor.especialidades
-                                .map((e) => Chip(
-                                      label: Text(
-                                        e.nombre,
-                                        style: GoogleFonts.poppins(
-                                          color: kMedphePrimary,
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 12.5,
+                        const SizedBox(height: 14),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(24),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.04),
+                                blurRadius: 16,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Container(
+                                    width: 40,
+                                    height: 40,
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                        colors: [
+                                          kMedphePrimary.withValues(alpha: 0.18),
+                                          kMedphePrimary.withValues(alpha: 0.08),
+                                        ],
+                                      ),
+                                      borderRadius: BorderRadius.circular(14),
+                                    ),
+                                    child: const Icon(
+                                      Icons.biotech_outlined,
+                                      size: 20,
+                                      color: kMedphePrimary,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Text(
+                                    'Subespecialidades',
+                                    style: GoogleFonts.poppins(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 15.5,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 14),
+                              Wrap(
+                                spacing: 8,
+                                runSpacing: 8,
+                                children: doctor.especialidades
+                                    .skip(1)
+                                    .map(
+                                      (e) => Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 14,
+                                          vertical: 7,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: kMedphePrimary.withValues(alpha: 0.08),
+                                          borderRadius: BorderRadius.circular(100),
+                                          border: Border.all(
+                                            color: kMedphePrimary.withValues(alpha: 0.2),
+                                          ),
+                                        ),
+                                        child: Text(
+                                          e.nombre,
+                                          style: GoogleFonts.poppins(
+                                            color: kMedphePrimary,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 12.5,
+                                          ),
                                         ),
                                       ),
-                                    ))
-                                .toList(),
+                                    )
+                                    .toList(),
+                              ),
+                            ],
                           ),
                         ),
                       ],
@@ -219,12 +290,11 @@ class _DoctorProfileContent extends ConsumerWidget {
               top: false,
               child: SizedBox(
                 height: 56,
-                child: ElevatedButton.icon(
+                child: ElevatedButton(
                   onPressed: _abrirWhatsapp,
-                  icon: const Icon(Icons.chat_bubble_outline, size: 20),
-                  label: const Text('Contactar por WhatsApp'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: kWhatsappGreen,
+                    backgroundColor: kMedpheSecondary,
+                    foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(28),
                     ),
@@ -232,8 +302,16 @@ class _DoctorProfileContent extends ConsumerWidget {
                       fontWeight: FontWeight.w700,
                       fontSize: 15,
                     ),
-                    shadowColor: kWhatsappGreen.withValues(alpha: 0.4),
+                    shadowColor: kMedpheSecondary.withValues(alpha: 0.4),
                     elevation: 8,
+                  ),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _WhatsappLogo(size: 22),
+                      SizedBox(width: 10),
+                      Text('Contactar por WhatsApp'),
+                    ],
                   ),
                 ),
               ),
@@ -245,7 +323,24 @@ class _DoctorProfileContent extends ConsumerWidget {
   }
 }
 
-const kWhatsappGreen = Color(0xFF25D366);
+
+/// Logo oficial de WhatsApp (PNG blanco sobre transparente).
+class _WhatsappLogo extends StatelessWidget {
+  const _WhatsappLogo({required this.size});
+
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return Image.asset(
+      'assets/images/whatsapp.png',
+      width: size,
+      height: size,
+      fit: BoxFit.contain,
+    );
+  }
+}
+
 
 class _IdentityCard extends StatelessWidget {
   const _IdentityCard({required this.doctor});
@@ -424,25 +519,30 @@ class _ContactRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final actions = <(IconData, String, Color, VoidCallback)>[
-      (Icons.chat_bubble, 'WhatsApp', kWhatsappGreen, () => onWhatsapp()),
+    final actions = <(Widget Function(Color), String, Color, VoidCallback)>[
+      (
+        (color) => _WhatsappLogo(size: 22),
+        'WhatsApp',
+        kMedpheSecondary,
+        () => onWhatsapp(),
+      ),
       if (doctor.instagramUrl != null)
         (
-          Icons.camera_alt_outlined,
+          (color) => Icon(Icons.camera_alt_outlined, color: color, size: 22),
           'Instagram',
           kCategoryPalette[3],
           () => onUrl(doctor.instagramUrl!),
         ),
       if (doctor.facebookUrl != null)
         (
-          Icons.facebook,
+          (color) => Icon(Icons.facebook, color: color, size: 22),
           'Facebook',
           kMedphePrimary,
           () => onUrl(doctor.facebookUrl!),
         ),
       if (doctor.tiktokUrl != null)
         (
-          Icons.music_note,
+          (color) => Icon(Icons.music_note, color: color, size: 22),
           'TikTok',
           kMedpheSecondary,
           () => onUrl(doctor.tiktokUrl!),
@@ -454,7 +554,7 @@ class _ContactRow extends StatelessWidget {
       children: [
         for (final action in actions)
           _ContactAction(
-            icon: action.$1,
+            iconBuilder: action.$1,
             label: action.$2,
             color: action.$3,
             onPressed: action.$4,
@@ -466,13 +566,13 @@ class _ContactRow extends StatelessWidget {
 
 class _ContactAction extends StatelessWidget {
   const _ContactAction({
-    required this.icon,
+    required this.iconBuilder,
     required this.label,
     required this.color,
     required this.onPressed,
   });
 
-  final IconData icon;
+  final Widget Function(Color color) iconBuilder;
   final String label;
   final Color color;
   final VoidCallback onPressed;
@@ -494,7 +594,7 @@ class _ContactAction extends StatelessWidget {
               child: SizedBox(
                 width: 52,
                 height: 52,
-                child: Icon(icon, color: color, size: 22),
+                child: Center(child: iconBuilder(color)),
               ),
             ),
           ),

@@ -5,6 +5,7 @@ import '../../config/theme/app_theme.dart';
 import 'doctors_search_delegate.dart';
 import 'favorites_screen.dart';
 import 'home_screen.dart';
+import 'profile_screen.dart';
 
 /// Contenedor raíz con bottom navigation: Inicio y Favoritos son pestañas
 /// reales (IndexedStack); Buscar es una acción que abre el buscador sin
@@ -26,13 +27,14 @@ class _HomeShellState extends ConsumerState<HomeShell> {
       extendBody: true,
       body: IndexedStack(
         index: _index,
-        children: const [HomeScreen(), FavoritesScreen()],
+        children: const [HomeScreen(), FavoritesScreen(), ProfileScreen()],
       ),
       bottomNavigationBar: _MedpheBottomNav(
         currentIndex: _index,
         onHome: () => setState(() => _index = 0),
         onSearch: () => openDoctorsSearch(context, ref),
         onFavorites: () => setState(() => _index = 1),
+        onProfile: () => setState(() => _index = 2),
       ),
     );
   }
@@ -44,12 +46,14 @@ class _MedpheBottomNav extends StatelessWidget {
     required this.onHome,
     required this.onSearch,
     required this.onFavorites,
+    required this.onProfile,
   });
 
   final int currentIndex;
   final VoidCallback onHome;
   final VoidCallback onSearch;
   final VoidCallback onFavorites;
+  final VoidCallback onProfile;
 
   @override
   Widget build(BuildContext context) {
@@ -106,6 +110,12 @@ class _MedpheBottomNav extends StatelessWidget {
                     label: 'Favoritos',
                     selected: currentIndex == 1,
                     onTap: onFavorites,
+                  ),
+                  _NavItem(
+                    icon: Icons.person_outline_rounded,
+                    label: 'Perfil',
+                    selected: currentIndex == 2,
+                    onTap: onProfile,
                   ),
                 ],
               ),

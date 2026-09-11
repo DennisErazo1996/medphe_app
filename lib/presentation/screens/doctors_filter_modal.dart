@@ -251,7 +251,9 @@ class _DoctorsFilterForm extends ConsumerWidget {
     final ciudadSeleccionada = ciudadesAsync.asData?.value
         .where((c) => c.id == filter.ciudadId)
         .firstOrNull;
-    final nombreCiudad = ciudadSeleccionada?.nombre ?? filter.ciudadId;
+    final nombreCiudad = ciudadSeleccionada != null
+        ? '${ciudadSeleccionada.nombre}, ${ciudadSeleccionada.departamento}'
+        : filter.ciudadId;
 
     final centroSeleccionado = centrosAsync.asData?.value
         .where((c) => c.id == filter.centroMedicoId)
@@ -435,7 +437,7 @@ class _SpecialtySelectionView extends ConsumerWidget {
         searchHint: 'Buscar especialidad...',
         selectedId: filter.especialidadId,
         items: [
-          for (final e in especialidades) (id: e.id, nombre: e.nombre),
+          for (final e in especialidades) (id: e.id, nombre: e.nombre, subtitle: null),
         ],
         isLoading: false,
         errorMessage: null,
@@ -504,7 +506,8 @@ class _CitySelectionView extends ConsumerWidget {
         searchHint: 'Buscar ciudad...',
         selectedId: filter.ciudadId,
         items: [
-          for (final c in ciudades) (id: c.id, nombre: c.nombre),
+          for (final c in ciudades)
+            (id: c.id, nombre: c.nombre, subtitle: c.departamento),
         ],
         isLoading: false,
         errorMessage: null,
@@ -579,6 +582,7 @@ class _CentroMedicoSelectionView extends ConsumerWidget {
               nombre: c.acronimo.isNotEmpty && c.acronimo != c.nombre
                   ? '${c.nombre} (${c.acronimo})'
                   : c.nombre,
+              subtitle: null,
             ),
         ],
         isLoading: false,
@@ -637,7 +641,7 @@ class _SearchableSelectionView extends StatefulWidget {
   final String titleAll;
   final String searchHint;
   final String? selectedId;
-  final List<({String id, String nombre})> items;
+  final List<({String id, String nombre, String? subtitle})> items;
   final bool isLoading;
   final String? errorMessage;
   final VoidCallback onBack;
@@ -703,7 +707,10 @@ class _SearchableSelectionViewState extends State<_SearchableSelectionView> {
     final filteredItems = widget.items.where((item) {
       if (tokens.isEmpty) return true;
       final itemFolded = _fold(item.nombre);
-      return tokens.every((token) => itemFolded.contains(token));
+      final subtitleFolded =
+          item.subtitle != null ? _fold(item.subtitle!) : '';
+      return tokens.every((token) =>
+          itemFolded.contains(token) || subtitleFolded.contains(token));
     }).toList();
 
     return Padding(
@@ -821,6 +828,7 @@ class _SearchableSelectionViewState extends State<_SearchableSelectionView> {
                 final item = filteredItems[index];
                 return _SelectionOptionTile(
                   title: item.nombre,
+                  subtitle: item.subtitle,
                   isSelected: widget.selectedId == item.id,
                   onTap: () {
                     FocusManager.instance.primaryFocus?.unfocus();
@@ -840,9 +848,11 @@ class _SelectionOptionTile extends StatelessWidget {
     required this.title,
     required this.isSelected,
     required this.onTap,
+    this.subtitle,
   });
 
   final String title;
+  final String? subtitle;
   final bool isSelected;
   final VoidCallback onTap;
 
@@ -868,13 +878,33 @@ class _SelectionOptionTile extends StatelessWidget {
           child: Row(
             children: [
               Expanded(
-                child: Text(
-                  title,
-                  style: GoogleFonts.poppins(
-                    fontSize: 14,
-                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                    color: isSelected ? kMedphePrimary : Colors.black87,
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      title,
+                      style: GoogleFonts.poppins(
+                        fontSize: 14,
+                        fontWeight:
+                            isSelected ? FontWeight.w700 : FontWeight.w500,
+                        color: isSelected ? kMedphePrimary : Colors.black87,
+                      ),
+                    ),
+                    if (subtitle != null && subtitle!.isNotEmpty) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        subtitle!,
+                        style: GoogleFonts.poppins(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          color: isSelected
+                              ? kMedphePrimary.withValues(alpha: 0.7)
+                              : Colors.grey.shade500,
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
               ),
               Icon(
