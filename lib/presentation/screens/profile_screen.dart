@@ -349,7 +349,7 @@ class _AppVersionBadge extends StatelessWidget {
     return Column(
       children: [
         Image.asset(
-          'assets/images/logo_horizontal.png',
+          'assets/images/logo_horizontal_color.png',
           height: 36,
           fit: BoxFit.contain,
         ),
